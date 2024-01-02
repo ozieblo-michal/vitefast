@@ -1,0 +1,1 @@
+# FastAPI by Bill Lubanovic - templates and exercises
