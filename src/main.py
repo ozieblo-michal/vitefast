@@ -11,6 +11,7 @@ app = FastAPI()
 # Inicjalizacja tabel w bazie danych na podstawie modeli z SQLAlchemy.
 models.Base.metadata.create_all(bind=engine)
 
+
 # Funkcja zależności do uzyskania sesji bazy danych.
 def get_db():
     db = SessionLocal()
@@ -19,17 +20,20 @@ def get_db():
     finally:
         db.close()
 
+
 # Model Pydantic, używany do walidacji danych wejściowych dla żądań.
 class Dummy(BaseModel):
     # Pole `id` typu UUID jest zakomentowane, aby uniknąć konfliktu z modelem SQLAlchemy.
-    #id: UUID
+    # id: UUID
     name: str = Field(min_length=1, max_length=100)
     description: str = Field(min_length=1, max_length=100)
+
 
 # Endpoint GET, który zwraca wszystkie obiekty Dummy z bazy danych.
 @app.get("/")
 def read_root(db: Session = Depends(get_db)):
     return db.query(models.Dummy).all()
+
 
 # Endpoint POST, który tworzy nowy obiekt Dummy w bazie danych.
 @app.post("/")
@@ -40,6 +44,7 @@ def create_dummy(dummy: Dummy, db: Session = Depends(get_db)):
     db.add(dummy_model)
     db.commit()
     return dummy_model
+
 
 # Uruchomienie serwera Uvicorn, jeśli plik jest uruchamiany jako główny program.
 if __name__ == "__main__":
