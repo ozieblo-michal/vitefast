@@ -21,3 +21,4 @@ class Dummy(Base):
     # Kolumna 'description', także przechowująca ciągi znaków.
     # Podobnie jak 'name', domyślnie może przyjąć wartości NULL.
     description = Column(String)
+
