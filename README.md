@@ -21,4 +21,13 @@ poetry shell
 poetry run python main.py
 ```
 
-### Note: pay attention to what is the Pydantic model and what is SQLAlchemy for class instances
+## tests:
+```zsh
+poetry run python -m pytest .
+```
+
+### Notes: 
+- attention to what is the Pydantic model and what is SQLAlchemy for class instances
+- Connecting SQLAlchemy and Pydantic models
+- Using APIRouter in FastAPI
+- Troubleshooting Python imports

@@ -1,12 +1,20 @@
 from fastapi.testclient import TestClient
-from src import main
+
+import sys
+from pathlib import Path
+
+# Dodanie katalogu zawierającego folder 'src' do sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+
+import main
+
 import pytest
 
 
 
 @pytest.fixture
 def client():
-    return TestClient(main)
+    return TestClient(main.app)
 
 def test_read_dummy(client):
     response = client.get("/dummy")
