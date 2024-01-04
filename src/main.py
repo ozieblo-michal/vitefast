@@ -6,6 +6,7 @@ app = FastAPI()
 app.include_router(dummy.router, prefix = "/dummy")
 
 
+
 # Uruchomienie serwera Uvicorn, jeśli plik jest uruchamiany jako główny program.
 if __name__ == "__main__":
     import uvicorn
