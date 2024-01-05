@@ -1,5 +1,9 @@
 from sqlalchemy import Column, Integer, String
-from db.database import Base
+
+
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 # Definicja klasy modelu SQLAlchemy, reprezentującej tabelę w bazie danych.
 class Dummy(Base):

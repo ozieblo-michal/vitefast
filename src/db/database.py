@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+
+
 
 # URL bazy danych - tutaj używamy SQLite i zapisujemy bazę danych w pliku demodb.db.
 SQLALCHEMY_DATABASE_URL = "sqlite:///./demodb.db"
@@ -15,6 +16,11 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread
 # przy każdym zapytaniu.
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Tworzenie klasy bazowej dla modeli danych.
-# Klasy dziedziczące po `Base` będą mapowane na tabelę w bazie danych.
-Base = declarative_base()
+
+
+
+
+import model.models as models
+
+# Inicjalizacja tabel w bazie danych na podstawie modeli z SQLAlchemy.
+models.Base.metadata.create_all(bind=engine)
