@@ -1,9 +1,8 @@
 from sqlalchemy import Column, Integer, String
-
-
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
+
 
 # Definicja klasy modelu SQLAlchemy, reprezentującej tabelę w bazie danych.
 class Dummy(Base):
@@ -12,7 +11,7 @@ class Dummy(Base):
 
     # Definicja kolumn tabeli. Każda kolumna jest atrybutem klasy.
 
-    # Kolumna 'id', która jest kluczem głównym tabeli. 
+    # Kolumna 'id', która jest kluczem głównym tabeli.
     # 'Integer' oznacza, że używamy typu danych liczbowych całkowitych.
     # 'primary_key=True' wskazuje, że to pole jest kluczem głównym.
     # 'index=True' oznacza utworzenie indeksu dla tej kolumny, co poprawia wydajność zapytań.
@@ -25,6 +24,3 @@ class Dummy(Base):
     # Kolumna 'description', także przechowująca ciągi znaków.
     # Podobnie jak 'name', domyślnie może przyjąć wartości NULL.
     description = Column(String)
-
-
-

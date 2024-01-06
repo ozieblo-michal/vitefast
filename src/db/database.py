@@ -1,14 +1,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-
+import model.models as models
 
 # URL bazy danych - tutaj używamy SQLite i zapisujemy bazę danych w pliku demodb.db.
 SQLALCHEMY_DATABASE_URL = "sqlite:///./demodb.db"
 
 # Tworzenie silnika SQLAlchemy, który będzie używany do interakcji z bazą danych.
 # Parametr `connect_args` jest specyficzny dla SQLite w celu umożliwienia dostępu z wielu wątków.
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+)
 
 # Tworzenie fabryki sesji SQLAlchemy. Sesje są używane do zarządzania operacjami na bazie danych.
 # `autocommit=False` oznacza, że SQLAlchemy nie zatwierdzi transakcji automatycznie.
@@ -16,11 +18,6 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread
 # przy każdym zapytaniu.
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-
-
-
-
-import model.models as models
 
 # Inicjalizacja tabel w bazie danych na podstawie modeli z SQLAlchemy.
 models.Base.metadata.create_all(bind=engine)

@@ -1,12 +1,12 @@
-
 from sqlalchemy.orm import Session
-import schema.schemas as schemas
-import model.models as models
 
-import auth
+import model.models as models
+import schema.schemas as schemas
+
 
 def get_all(db: Session):
     return db.query(models.Dummy).all()
+
 
 def create(db: Session, dummy: schemas.Dummy):
     sqlalchemy_model = models.Dummy()

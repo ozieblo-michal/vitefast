@@ -1,13 +1,11 @@
-from fastapi import Depends, APIRouter
-from db.database import SessionLocal
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from schema.schemas import Dummy
 
 import service.dummy as dummy_service
+from db.database import SessionLocal
+from schema.schemas import Dummy
 
 router = APIRouter()
-
-
 
 
 # Funkcja zależności do uzyskania sesji bazy danych.
@@ -35,5 +33,3 @@ def read_root(db: Session = Depends(get_db)):
 @router.post("/", status_code=201, response_model=Dummy)
 def create_dummy(dummy: Dummy, db: Session = Depends(get_db)):
     return dummy_service.create(db, dummy)
-
-
