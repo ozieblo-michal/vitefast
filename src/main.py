@@ -3,6 +3,8 @@ from fastapi import FastAPI
 
 from route import dummy
 
+
+
 app = FastAPI()
 
 app.include_router(dummy.router, prefix = "/dummy")
