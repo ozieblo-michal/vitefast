@@ -3,24 +3,20 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-
-# Definicja klasy modelu SQLAlchemy, reprezentującej tabelę w bazie danych.
 class Dummy(Base):
-    # Nazwa tabeli w bazie danych.
+    """Model class representing a 'dummy' table in the database.
+
+    This class extends `Base`, making it a model class that SQLAlchemy can map to a table.
+    The table will store data about 'Dummy' objects with attributes id, name, and description.
+
+    Attributes:
+        id (int): The primary key, automatically generated, unique identifier for each record.
+        name (str): The name attribute, a string that can be NULL.
+        description (str): The description attribute, a string that can also be NULL.
+    """
+
     __tablename__ = "dummy"
 
-    # Definicja kolumn tabeli. Każda kolumna jest atrybutem klasy.
-
-    # Kolumna 'id', która jest kluczem głównym tabeli.
-    # 'Integer' oznacza, że używamy typu danych liczbowych całkowitych.
-    # 'primary_key=True' wskazuje, że to pole jest kluczem głównym.
-    # 'index=True' oznacza utworzenie indeksu dla tej kolumny, co poprawia wydajność zapytań.
     id = Column(Integer, primary_key=True, index=True)
-
-    # Kolumna 'name', przechowująca ciągi znaków (String).
-    # Domyślnie nie jest to pole wymagane i może przyjąć wartości NULL.
     name = Column(String)
-
-    # Kolumna 'description', także przechowująca ciągi znaków.
-    # Podobnie jak 'name', domyślnie może przyjąć wartości NULL.
     description = Column(String)
