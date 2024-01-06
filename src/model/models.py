@@ -26,3 +26,5 @@ class Dummy(Base):
     # Podobnie jak 'name', domyślnie może przyjąć wartości NULL.
     description = Column(String)
 
+
+

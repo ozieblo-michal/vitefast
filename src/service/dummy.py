@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 import schema.schemas as schemas
 import model.models as models
 
+import auth
+
 def get_all(db: Session):
     return db.query(models.Dummy).all()
 

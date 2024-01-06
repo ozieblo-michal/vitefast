@@ -1,13 +1,20 @@
 from fastapi import FastAPI
 
 
-from route import dummy
+from route import dummy, auth
+
+
+# from auth.auth import pwd_context 
+# print(f'dupa: {pwd_context.hash("muminek")}')
 
 
 
 app = FastAPI()
 
+
+
 app.include_router(dummy.router, prefix = "/dummy")
+app.include_router(auth.router)
 
 
 

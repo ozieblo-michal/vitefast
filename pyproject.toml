@@ -13,6 +13,11 @@ sqlalchemy = "^2.0.25"
 uvicorn = "^0.25.0"
 setuptools = "^69.0.3"
 httpx = "^0.26.0"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
+fastapi-security = {git = "git@github.com:cladden/fastapi-security.git"}
+python-multipart = "^0.0.6"
+bcrypt = "4.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.12.1"
