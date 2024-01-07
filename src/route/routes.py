@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 import auth.auth as auth
-import service.dummy as dummy_service
+import service.services as dummy_service
 from db.database import SessionLocal
 from schema.schemas import Dummy, DummyPatch, User
 
