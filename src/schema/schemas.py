@@ -1,4 +1,7 @@
+from typing import Optional, Union
+
 from pydantic import BaseModel, Field
+
 
 class Dummy(BaseModel):
     """
@@ -10,10 +13,18 @@ class Dummy(BaseModel):
         name (str): The name of the Dummy object. Must be between 1 and 100 characters.
         description (str): The description of the Dummy object. Must be between 1 and 100 characters.
     """
+
     # The `id` field of type UUID is commented out to avoid conflict with the SQLAlchemy model.
     # id: UUID
     name: str = Field(min_length=1, max_length=100)
     description: str = Field(min_length=1, max_length=100)
+    optional_field: Optional[Union[str, None]] = Field(default=None, max_length=100)
+
+
+class DummyPatch(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    description: Optional[str] = Field(None, min_length=1, max_length=100)
+    optional_field: Optional[Union[str, None]] = Field(default=None, max_length=100)
 
 
 class Token(BaseModel):
@@ -26,6 +37,7 @@ class Token(BaseModel):
         access_token (str): The JWT access token.
         token_type (str): The type of the token, typically "bearer".
     """
+
     access_token: str
     token_type: str
 
@@ -39,6 +51,7 @@ class TokenData(BaseModel):
     Attributes:
         username (str, optional): The username contained in the token payload. Default is None.
     """
+
     username: str | None = None
 
 
@@ -54,6 +67,7 @@ class User(BaseModel):
         full_name (str, optional): The full name of the user. Default is None.
         disabled (bool, optional): Flag to indicate if the user account is disabled. Default is None.
     """
+
     username: str
     email: str | None = None
     full_name: str | None = None
@@ -69,4 +83,5 @@ class UserInDB(User):
     Attributes:
         hashed_password (str): The hashed password of the user.
     """
+
     hashed_password: str

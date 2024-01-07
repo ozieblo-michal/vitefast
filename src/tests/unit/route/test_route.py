@@ -35,3 +35,4 @@ def test_read_dummy(client):
     """
     response = client.get("/dummy")
     assert response.status_code == 200
+    assert response.headers["content-type"] == "application/json"

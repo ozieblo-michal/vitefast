@@ -19,7 +19,7 @@ engine = create_engine(
 # giving more control over when to commit.
 # `autoflush=False` means SQLAlchemy will not automatically flush changes to the database
 # on every query, providing more control over when data is sent to the database.
-# This setup is important for managing transactions and database state explicitly, 
+# This setup is important for managing transactions and database state explicitly,
 # ensuring data integrity and consistency.
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

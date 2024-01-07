@@ -6,6 +6,7 @@ from schema.schemas import Token, User
 
 router = APIRouter()
 
+
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     """Generate an access token for authenticated users.
@@ -20,6 +21,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     """
     return auth.login_for_access_token(form_data)
 
+
 @router.get("/users/me/", response_model=User)
 async def read_users_me(current_user: User = Depends(auth.get_current_active_user)):
     """Read and return the current authenticated user's information.
@@ -33,6 +35,7 @@ async def read_users_me(current_user: User = Depends(auth.get_current_active_use
         User: The User schema containing the user's information.
     """
     return current_user
+
 
 @router.get("/users/me/items/")
 async def read_own_items(current_user: User = Depends(auth.get_current_active_user)):

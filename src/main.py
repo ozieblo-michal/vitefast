@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from route import auth, dummy
 
@@ -6,17 +7,15 @@ from route import auth, dummy
 # print(f'dupa: {pwd_context.hash("muminek")}')
 
 
-from fastapi.middleware.cors import CORSMiddleware
-
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8000/",],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    )
+)
 
 
 app.include_router(dummy.router, prefix="/dummy")

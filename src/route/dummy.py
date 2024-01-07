@@ -1,15 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+import auth.auth as auth
 import service.dummy as dummy_service
 from db.database import SessionLocal
-from schema.schemas import Dummy
-
-import auth.auth as auth
-from schema.schemas import User
-
+from schema.schemas import Dummy, DummyPatch, User
 
 router = APIRouter()
+
 
 def get_db():
     """Dependency function to obtain a database session.
@@ -24,6 +22,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 @router.get("")
 @router.get("/")
@@ -40,6 +39,7 @@ def read_root(db: Session = Depends(get_db)):
     """
     return dummy_service.get_all(db)
 
+
 @router.get("/{dummy_id}", response_model=Dummy)
 def read_dummy(dummy_id: int, db: Session = Depends(get_db)):
     """Retrieve a dummy object from the database.
@@ -55,27 +55,42 @@ def read_dummy(dummy_id: int, db: Session = Depends(get_db)):
     """
     return dummy_service.get_one(db, dummy_id)
 
+
 @router.post("", status_code=201, response_model=Dummy)
 @router.post("/", status_code=201, response_model=Dummy)
-def create_dummy(dummy: Dummy, db: Session = Depends(get_db), current_user: User = Depends(auth.get_current_active_user)):
-
+def create_dummy(
+    dummy: Dummy,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth.get_current_active_user),
+):
     return dummy_service.create(dummy, db)
 
-@router.put("/{dummy_id}", response_model=Dummy)
-def modify_completely(dummy_id: int, dummy: Dummy, db: Session = Depends(get_db), current_user: User = Depends(auth.get_current_active_user)):
 
+@router.put("/{dummy_id}", response_model=Dummy)
+def modify_completely(
+    dummy_id: int,
+    dummy: Dummy,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth.get_current_active_user),
+):
     return dummy_service.modify_completely(dummy_id, dummy, db)
 
-@router.patch("/{dummy_id}", response_model=Dummy)
-def modify_partially(dummy_id: int, dummy: Dummy, db: Session = Depends(get_db), current_user: User = Depends(auth.get_current_active_user)):
 
+@router.patch("/{dummy_id}", response_model=DummyPatch)
+def modify_partially(
+    dummy_id: int,
+    dummy: DummyPatch,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth.get_current_active_user),
+):
     return dummy_service.modify_partially(dummy_id, dummy, db)
 
-@router.delete("/{dummy_id}", status_code=204)
-def delete_dummy(dummy_id: int, db: Session = Depends(get_db), current_user: User = Depends(auth.get_current_active_user)):
 
+@router.delete("/{dummy_id}", status_code=204)
+def delete_dummy(
+    dummy_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth.get_current_active_user),
+):
     dummy_service.delete(dummy_id, db)
     return {"message": "Dummy object deleted successfully"}
-
-
-

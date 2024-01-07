@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 import model.models as models
@@ -15,7 +16,12 @@ def get_all(db: Session):
     Returns:
         List[models.Dummy]: A list of 'Dummy' model objects representing all records in the 'dummy' table.
     """
-    return db.query(models.Dummy).all()
+    sqlalchemy_model = db.query(models.Dummy).all()
+
+    if not sqlalchemy_model:
+        raise HTTPException(status_code=404, detail="Object not found")
+
+    return sqlalchemy_model
 
 
 def create(dummy: schemas.Dummy, db: Session):
@@ -34,6 +40,7 @@ def create(dummy: schemas.Dummy, db: Session):
     sqlalchemy_model = models.Dummy()
     sqlalchemy_model.name = dummy.name
     sqlalchemy_model.description = dummy.description
+    sqlalchemy_model.optional_field = dummy.optional_field
 
     # Adding and committing the new record to the database
     db.add(sqlalchemy_model)
@@ -43,40 +50,61 @@ def create(dummy: schemas.Dummy, db: Session):
 
 
 def modify_completely(dummy_id: int, dummy: schemas.Dummy, db: Session):
+    sqlalchemy_model = (
+        db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+    )
 
-    sqlalchemy_model = db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+    if not sqlalchemy_model:
+        raise HTTPException(status_code=404, detail="Object not found")
+
     sqlalchemy_model.name = dummy.name
     sqlalchemy_model.description = dummy.description
+    sqlalchemy_model.optional_field = dummy.optional_field
 
     db.add(sqlalchemy_model)
     db.commit()
 
     return sqlalchemy_model
+
 
 def modify_partially(dummy_id: int, dummy: schemas.Dummy, db: Session):
+    sqlalchemy_model = (
+        db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+    )
 
-    sqlalchemy_model = db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
-    if dummy.name:
-        sqlalchemy_model.name = dummy.name
-    if dummy.description:
-        sqlalchemy_model.description = dummy.description
+    if not sqlalchemy_model:
+        raise HTTPException(status_code=404, detail="Object not found")
 
-    db.add(sqlalchemy_model)
+    update_data = dummy.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(sqlalchemy_model, key, value)
+
+    # db.add(sqlalchemy_model)
     db.commit()
 
     return sqlalchemy_model
 
-def delete(dummy_id: int, db: Session):
 
-    sqlalchemy_model = db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+def delete(dummy_id: int, db: Session):
+    sqlalchemy_model = (
+        db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+    )
+
+    if not sqlalchemy_model:
+        raise HTTPException(status_code=404, detail="Object not found")
 
     db.delete(sqlalchemy_model)
     db.commit()
 
     return sqlalchemy_model
 
-def get_one(db: Session, dummy_id: int):
 
-    sqlalchemy_model = db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+def get_one(db: Session, dummy_id: int):
+    sqlalchemy_model = (
+        db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+    )
+
+    if not sqlalchemy_model:
+        raise HTTPException(status_code=404, detail="Object not found")
 
     return sqlalchemy_model

@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
 class Dummy(Base):
     """Model class representing a 'dummy' table in the database.
 
@@ -18,5 +19,6 @@ class Dummy(Base):
     __tablename__ = "dummy"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    description = Column(String)
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    optional_field = Column(String, nullable=True)

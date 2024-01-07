@@ -14,6 +14,14 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
+def credentials_exception():
+    return HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Nie można zweryfikować poświadczeń",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+
 # Security setup for password hashing.
 # Bcrypt is chosen as the hashing algorithm, known for its security and efficiency.
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -21,6 +29,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # Setting up OAuth2 with Password (and Bearer) as the authentication method.
 # The tokenUrl parameter indicates the URL where the client can get the token.
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 # Function to verify the password input against the stored hashed password.
 # Returns True if the password matches, ensuring secure password verification.
@@ -36,6 +45,7 @@ def verify_password(plain_password, hashed_password):
     """
     return pwd_context.verify(plain_password, hashed_password)
 
+
 # Function to hash the password before storing it in the database.
 # This enhances security by storing a hashed version of the password.
 def get_password_hash(password):
@@ -48,6 +58,7 @@ def get_password_hash(password):
         str: A hashed version of the password.
     """
     return pwd_context.hash(password)
+
 
 # Function to retrieve user data from the database based on the username.
 # Helps in authenticating the user and getting user-related data.
@@ -64,6 +75,7 @@ def get_user(db, username: str):
     if username in db:
         user_dict = db[username]
         return UserInDB(**user_dict)
+
 
 # Function to authenticate the user by verifying the username and password.
 # Returns the user object if authentication is successful, otherwise False.
@@ -82,6 +94,7 @@ def authenticate_user(db, username: str, password: str):
     if not user or not verify_password(password, user.hashed_password):
         return False
     return user
+
 
 # Function to create a JWT access token with an optional expiry.
 # Encodes user-related data (like username) into a token for secure transmission.
@@ -104,6 +117,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+
 # Dependency function to get the current user from the token.
 # Throws an error if the token is invalid, ensuring secure access to user-specific endpoints.
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -122,14 +136,15 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
-            raise credentials_exception
+            raise credentials_exception()
         token_data = TokenData(username=username)
     except JWTError:
-        raise credentials_exception
+        raise credentials_exception()
     user = get_user(db, username=token_data.username)
     if user is None:
-        raise credentials_exception
+        raise credentials_exception()
     return user
+
 
 # Dependency function to get the current active user.
 # Throws an error if the user is disabled, ensuring only active users can access certain endpoints.
@@ -148,6 +163,7 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
 
 # Endpoint to handle login and return an access token.
 # Validates user credentials and returns a JWT token for authenticated sessions.
