@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 import model.models as models
 import schema.schemas as schemas
 
+
 def get_all(db: Session):
     """Retrieve all records of 'Dummy' from the database.
 
@@ -17,7 +18,7 @@ def get_all(db: Session):
     return db.query(models.Dummy).all()
 
 
-def create(db: Session, dummy: schemas.Dummy):
+def create(dummy: schemas.Dummy, db: Session):
     """Create a new 'Dummy' record in the database.
 
     This function takes a 'Dummy' schema object, maps it to the SQLAlchemy model, and stores it in the database.
@@ -37,5 +38,45 @@ def create(db: Session, dummy: schemas.Dummy):
     # Adding and committing the new record to the database
     db.add(sqlalchemy_model)
     db.commit()
+
+    return sqlalchemy_model
+
+
+def modify_completely(dummy_id: int, dummy: schemas.Dummy, db: Session):
+
+    sqlalchemy_model = db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+    sqlalchemy_model.name = dummy.name
+    sqlalchemy_model.description = dummy.description
+
+    db.add(sqlalchemy_model)
+    db.commit()
+
+    return sqlalchemy_model
+
+def modify_partially(dummy_id: int, dummy: schemas.Dummy, db: Session):
+
+    sqlalchemy_model = db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+    if dummy.name:
+        sqlalchemy_model.name = dummy.name
+    if dummy.description:
+        sqlalchemy_model.description = dummy.description
+
+    db.add(sqlalchemy_model)
+    db.commit()
+
+    return sqlalchemy_model
+
+def delete(dummy_id: int, db: Session):
+
+    sqlalchemy_model = db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+
+    db.delete(sqlalchemy_model)
+    db.commit()
+
+    return sqlalchemy_model
+
+def get_one(db: Session, dummy_id: int):
+
+    sqlalchemy_model = db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
 
     return sqlalchemy_model
