@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from route import auth, routes
+from route import auth, routes, files
 
 # from auth.auth import pwd_context
 # print(f'{pwd_context.hash("muminek")}')
@@ -20,6 +20,7 @@ app.add_middleware(
 
 app.include_router(routes.router, prefix="/dummy")
 app.include_router(auth.router)
+app.include_router(files.router)
 
 
 # Uruchomienie serwera Uvicorn, jeśli plik jest uruchamiany jako główny program.

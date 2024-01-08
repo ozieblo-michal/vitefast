@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
+import auth.utils as utils
 from db.fake_db import db
 from schema.schemas import TokenData, User, UserInDB
 
@@ -22,9 +23,7 @@ def credentials_exception():
     )
 
 
-# Security setup for password hashing.
-# Bcrypt is chosen as the hashing algorithm, known for its security and efficiency.
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 # Setting up OAuth2 with Password (and Bearer) as the authentication method.
 # The tokenUrl parameter indicates the URL where the client can get the token.
@@ -43,21 +42,10 @@ def verify_password(plain_password, hashed_password):
     Returns:
         bool: True if the password is correct, False otherwise.
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    return utils.pwd_context.verify(plain_password, hashed_password)
 
 
-# Function to hash the password before storing it in the database.
-# This enhances security by storing a hashed version of the password.
-def get_password_hash(password):
-    """Generate a hash for the given password.
 
-    Args:
-        password (str): The plain text password to be hashed.
-
-    Returns:
-        str: A hashed version of the password.
-    """
-    return pwd_context.hash(password)
 
 
 # Function to retrieve user data from the database based on the username.
