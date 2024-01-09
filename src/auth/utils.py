@@ -4,6 +4,7 @@ from passlib.context import CryptContext
 # Bcrypt is chosen as the hashing algorithm, known for its security and efficiency.
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 # Function to hash the password before storing it in the database.
 # This enhances security by storing a hashed version of the password.
 def get_password_hash(password):

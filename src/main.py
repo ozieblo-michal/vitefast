@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from route import auth, routes, files
+from route import auth, files, routes
 
 # from auth.auth import pwd_context
 # print(f'{pwd_context.hash("muminek")}')
@@ -28,6 +28,7 @@ if __name__ == "__main__":
     import uvicorn
 
     # Argument `reload=True` pozwala na automatyczne przeładowanie serwera przy zmianie kodu.
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    # uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
     # Można również uruchomić serwer z wieloma workerami, ale bez opcji przeładowania.
     # uvicorn.run("main:app", host="127.0.0.1", port=8000, workers=2)

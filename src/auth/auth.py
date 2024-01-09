@@ -23,8 +23,6 @@ def credentials_exception():
     )
 
 
-
-
 # Setting up OAuth2 with Password (and Bearer) as the authentication method.
 # The tokenUrl parameter indicates the URL where the client can get the token.
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -43,9 +41,6 @@ def verify_password(plain_password, hashed_password):
         bool: True if the password is correct, False otherwise.
     """
     return utils.pwd_context.verify(plain_password, hashed_password)
-
-
-
 
 
 # Function to retrieve user data from the database based on the username.

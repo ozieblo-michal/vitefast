@@ -2,7 +2,7 @@
 name = "fastapi-templates"
 version = "0.1.0"
 description = "templates and exercises"
-authors = ["Your Name <you@example.com>"]
+authors = ["Your Name <ozieblo.michal@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -15,7 +15,7 @@ setuptools = "^69.0.3"
 httpx = "^0.26.0"
 python-jose = "^3.3.0"
 passlib = "^1.7.4"
-fastapi-security = {git = "git@github.com:cladden/fastapi-security.git"}
+fastapi-security = {git = "https://github.com/cladden/fastapi-security.git"}
 python-multipart = "^0.0.6"
 bcrypt = "4.0.1"
 stubs = "^1.0.0"

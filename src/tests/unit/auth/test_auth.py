@@ -1,14 +1,15 @@
 from fastapi.testclient import TestClient
-import main
 from jose import jwt
-from schema.schemas import UserInDB
-import auth.auth as auth
 
+import auth.auth as auth
 import db.fake_db as fake_db
+import main
+from schema.schemas import UserInDB
 
 db = fake_db.db
 
 client = TestClient(main.app)
+
 
 def test_create_access_token():
     user_data = {"sub": "testuser"}
@@ -16,10 +17,12 @@ def test_create_access_token():
     payload = jwt.decode(token, auth.SECRET_KEY, algorithms=[auth.ALGORITHM])
     assert payload.get("sub") == user_data["sub"]
 
+
 def test_authenticate_user():
     user = auth.authenticate_user(db, "testuser", "testpassword")
     assert user
     assert user.username == "testuser"
+
 
 def test_get_current_user():
     user_data = {"sub": "testuser"}
@@ -28,6 +31,7 @@ def test_get_current_user():
     assert current_user.status_code == 200
     assert current_user.json()["username"] == "testuser"
 
+
 def test_get_current_active_user_inactive():
     user_data = {"sub": "inactive_user"}
     token = auth.create_access_token(user_data)
@@ -35,7 +39,10 @@ def test_get_current_active_user_inactive():
     assert response.status_code == 400
     assert "Inactive user" in response.text
 
+
 def test_login_for_access_token():
-    response = client.post("/token", data={"username": "testuser", "password": "testpassword"})
+    response = client.post(
+        "/token", data={"username": "testuser", "password": "testpassword"}
+    )
     assert response.status_code == 200
     assert "access_token" in response.json()

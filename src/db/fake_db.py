@@ -17,5 +17,5 @@ db = {
         "username": "inactive_user",
         "hashed_password": get_password_hash("testpassword"),
         "disabled": True,
-    }
+    },
 }
