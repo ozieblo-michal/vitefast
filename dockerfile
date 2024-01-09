@@ -8,6 +8,7 @@ RUN apk add --no-cache --virtual .build-deps \
     gcc \
     libc-dev \
     linux-headers \
+    make \
     openssl-dev \
     zlib-dev \
     libffi-dev
