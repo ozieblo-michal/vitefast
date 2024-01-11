@@ -6,6 +6,7 @@ from route import auth, files, routes
 import logging
 from datetime import datetime, timedelta
 
+#from mangum import Mangum
 
 
 from configure_logger import configure_logger
@@ -32,6 +33,8 @@ logger = configure_logger(log_path)
 
 
 app = FastAPI()
+
+#handler = Mangum(app)
 
 app.add_middleware(
     CORSMiddleware,

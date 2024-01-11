@@ -219,7 +219,7 @@ oauth2 = ["PyJWT[crypto] (>=2,<3)", "aiohttp (>=3,<4)"]
 
 [package.source]
 type = "git"
-url = "git@github.com:cladden/fastapi-security.git"
+url = "https://github.com/cladden/fastapi-security.git"
 reference = "HEAD"
 resolved_reference = "53108277652eed08704fee8f2997d58efdc2458d"
 
@@ -1114,4 +1114,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "4fd84760e0fd1afb5459c1c99f838277898ab13cd71a2509a2c575c752e23056"
+content-hash = "42c9ced8e61bdf6c5eecf0c189b7290123a886ec6443b6d9a8ce5bb48cae695c"
