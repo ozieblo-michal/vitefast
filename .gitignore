@@ -21,10 +21,27 @@ venv
 docs.zip
 archive.zip
 
-# vim temporary files
 *~
 .*.sw?
 .cache
 
-# macOS
 .DS_Store
+
+*.tfstate
+*.tfstate.*
+
+.terraform/
+
+.env
+*.tfvars
+*.tfvars.json
+
+*.tflog
+
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+.vs

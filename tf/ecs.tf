@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "fastapi_task" {
 
   container_definitions = jsonencode([{
     name  = "fastapi"
-    image = "dockerhub_username/your_image:tag"
+    image = var.image
     portMappings = [{
       containerPort = 80
       hostPort      = 80
