@@ -88,7 +88,7 @@ def modify_partially(dummy_id: int, dummy: schemas.Dummy, db: Session):
         logger.error("404: Object not found")
         raise HTTPException(status_code=404, detail="Object not found")
 
-    update_data = dummy.dict(exclude_unset=True)
+    update_data = dummy.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(sqlalchemy_model, key, value)
 
