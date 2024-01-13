@@ -1,12 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from route import auth, files, routes
+from route import auth, files, routes, route_limiter
 
 import logging
 from datetime import datetime, timedelta
 
 #from mangum import Mangum
+
+
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 
 from configure_logger import configure_logger
@@ -33,6 +37,10 @@ logger = configure_logger(log_path)
 
 
 app = FastAPI()
+
+app.state.limiter = route_limiter.limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 
 #handler = Mangum(app)
 
