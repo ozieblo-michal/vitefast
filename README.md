@@ -87,3 +87,6 @@ docker rmi -f $(docker images -q)
 cd src
 poetry run python -m pytest .
 ```
+
+## Cloud infrastructure diagram
+![Cloud infrastructure diagram](cloudschema.drawio.png "Cloud infrastructure diagram")

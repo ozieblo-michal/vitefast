@@ -1,5 +1,7 @@
-FROM --platform=linux/amd64 alpine:3.14
+FROM alpine:3.19
 
+# This hack is widely applied to avoid python printing issues in docker containers.
+# See: https://github.com/Docker-Hub-frolvlad/docker-alpine-python3/pull/13
 ENV PYTHONUNBUFFERED=1
 
 RUN apk add --no-cache --virtual .build-deps \
@@ -28,6 +30,8 @@ WORKDIR /
 RUN rm -rf Python-3.12.0
 RUN rm Python-3.12.0.tar.xz
 RUN apk del .build-deps
+
+RUN python3.12 --version
 
 RUN ln -sf /usr/local/bin/python3.12 /usr/bin/python \
  && ln -sf /usr/local/bin/python3.12 /usr/bin/python3 \
