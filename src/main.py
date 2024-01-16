@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from route import auth, files, routes, route_limiter
 
-import logging
+# import logging
 from datetime import datetime, timedelta
 
 #from mangum import Mangum
@@ -13,10 +13,10 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 
-from configure_logger import configure_logger
+# from configure_logger import configure_logger
 
-logging.basicConfig()
-logging.getLogger().setLevel(logging.INFO)
+# logging.basicConfig()
+# logging.getLogger().setLevel(logging.INFO)
 
 current_datetime = datetime.now()
 
@@ -30,7 +30,7 @@ timestamp = f"{date_str} {hour_str}-{next_hour_str}"
 
 log_path = f"logs/{timestamp}.log"
 
-logger = configure_logger(log_path)
+# logger = configure_logger(log_path)
 
 # from auth.auth import pwd_context
 # print(f'{pwd_context.hash("muminek")}')
@@ -63,6 +63,8 @@ if __name__ == "__main__":
     import uvicorn
     # Argument `reload=True` pozwala na automatyczne przeładowanie serwera przy zmianie kodu.
     # uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    # uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+    uvicorn.run("main:app", host="0.0.0.0", port=80)
     # Można również uruchomić serwer z wieloma workerami, ale bez opcji przeładowania.
     # uvicorn.run("main:app", host="127.0.0.1", port=8000, workers=2)

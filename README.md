@@ -80,6 +80,10 @@ docker rm [ID OR NAME]
 docker images
 docker rmi fastapi-template:dev
 docker rmi -f $(docker images -q)
+
+sudo docker stop $(sudo docker ps -aq)
+sudo docker rm $(sudo docker ps -aq)
+sudo docker system prune -a
 ```
 
 ## How to run tests

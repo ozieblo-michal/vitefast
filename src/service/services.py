@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 import model.models as models
 import schema.schemas as schemas
 
-import logging
-logger = logging.getLogger("configure_logger")
+# import logging
+# logger = logging.getLogger("configure_logger")
 
 
 def get_all(db: Session):
@@ -22,7 +22,7 @@ def get_all(db: Session):
     sqlalchemy_model = db.query(models.Dummy).all()
 
     if not sqlalchemy_model:
-        logger.error("404: Object not found")
+        # logger.error("404: Object not found")
         raise HTTPException(status_code=404, detail="Object not found")
 
     return sqlalchemy_model
@@ -43,7 +43,7 @@ def create(dummy: schemas.Dummy, db: Session):
 
     existing_dummy = db.query(models.Dummy).filter(models.Dummy.name == dummy.name).first()
     if existing_dummy:
-        logger.error("Duplicate")
+        # logger.error("Duplicate")
         raise ValueError(f"Record including name '{dummy.name}' already exists")
 
 
@@ -66,7 +66,7 @@ def modify_completely(dummy_id: int, dummy: schemas.Dummy, db: Session):
     )
 
     if not sqlalchemy_model:
-        logger.error("404: Object not found")
+        # logger.error("404: Object not found")
         raise HTTPException(status_code=404, detail="Object not found")
 
     sqlalchemy_model.name = dummy.name
@@ -85,7 +85,7 @@ def modify_partially(dummy_id: int, dummy: schemas.Dummy, db: Session):
     )
 
     if not sqlalchemy_model:
-        logger.error("404: Object not found")
+        # logger.error("404: Object not found")
         raise HTTPException(status_code=404, detail="Object not found")
 
     update_data = dummy.model_dump(exclude_unset=True)
@@ -104,7 +104,7 @@ def delete(dummy_id: int, db: Session):
     )
 
     if not sqlalchemy_model:
-        logger.error("404: Object not found")
+        # logger.error("404: Object not found")
         raise HTTPException(status_code=404, detail="Object not found")
 
     db.delete(sqlalchemy_model)
@@ -119,7 +119,7 @@ def get_one(db: Session, dummy_id: int):
     )
 
     if not sqlalchemy_model:
-        logger.error("404: Object not found")
+        # logger.error("404: Object not found")
         raise HTTPException(status_code=404, detail="Object not found")
 
     return sqlalchemy_model
