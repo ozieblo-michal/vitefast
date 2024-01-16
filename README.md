@@ -92,5 +92,11 @@ cd src
 poetry run python -m pytest .
 ```
 
-## Cloud infrastructure diagram
+## Cloud infrastructure diagram (x86_64 EC2)
 ![Cloud infrastructure diagram](cloudschema.drawio.png "Cloud infrastructure diagram")
+
+```zsh
+sudo apt install docker.io
+sudo docker pull ozieblomichal/fastapi-template:amd
+sudo docker run -d -p 80:80 <<IMAGE_ID>>
+```
