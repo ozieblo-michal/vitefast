@@ -16,6 +16,7 @@ jobs:
       uses: docker/setup-buildx-action@v1
     - name: Build Docker image
       run: docker build -t fastapi-template:amd .
-    - name: Run Pytest
-      run: docker run --rm fastapi-template:amd /bin/bash -c "cd src && poetry run python -m pytest ."
+    - name: Run Pytest in /src directory
+      run: docker run --rm fastapi-template:amd /bin/sh -c "cd src && poetry run python -m pytest ."
+
 
