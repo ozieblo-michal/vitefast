@@ -17,4 +17,4 @@ jobs:
     - name: Build Docker image
       run: docker build -t fastapi-template:amd .
     - name: Run Pytest
-      run: docker run --rm fastapi-template:amd python -m pytest .
+      run: docker run --rm fastapi-template:amd poetry run python -m pytest .
