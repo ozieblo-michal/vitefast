@@ -46,3 +46,50 @@ def test_download_file():
         assert response.content == test_file_content
     finally:
         remove_test_file()
+
+
+import httpx
+import pytest
+
+app = main.app
+
+@pytest.mark.asyncio
+async def test_upload_file_type():
+    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
+
+        response = await client.post(
+            "/upload",
+            files={"file": ("test.csv", "dummy content", "text/csv")}
+        )
+        assert response.status_code == 200
+
+
+        response = await client.post(
+            "/upload",
+            files={"file": ("test.exe", "dummy content", "application/octet-stream")}
+        )
+        assert response.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_upload_file_size():
+    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
+
+        small_file_content = b"a" * (2*1024*1024 - 1)  
+        
+        response = await client.post(
+            "/upload",
+            files={"file": ("small_file.txt", small_file_content)}
+        )
+        assert response.status_code == 200
+
+
+        large_file_content = b"a" * (2*1024*1024 + 1)  
+        
+        response = await client.post(
+            "/upload",
+            files={"file": ("large_file.txt", large_file_content)}
+        )
+        assert response.status_code == 413
+
+

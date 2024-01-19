@@ -36,6 +36,9 @@ log_path = f"logs/{timestamp}.log"
 # print(f'{pwd_context.hash("muminek")}')
 
 
+
+
+
 app = FastAPI()
 
 app.state.limiter = route_limiter.limiter

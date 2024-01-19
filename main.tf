@@ -81,6 +81,79 @@ resource "aws_security_group" "allow_ssh_http" {
   }
 }
 
+
+
+
+
+
+
+
+
+
+resource "aws_iam_policy" "s3_access_policy" {
+  name        = "S3AccessPolicy"
+  description = "S3 access policy for EC2 instances"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = [
+          "s3:ListBucket",
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ],
+        Effect   = "Allow",
+        Resource = [
+          "${aws_s3_bucket.my_bucket.arn}",
+          "${aws_s3_bucket.my_bucket.arn}/*"
+        ]
+      },
+    ]
+  })
+}
+
+
+resource "aws_iam_role" "ec2_s3_access_role" {
+  name = "EC2S3AccessRole"
+
+  assume_role_policy = jsonencode({
+    Version   = "2012-10-17",
+    Statement = [
+      {
+        Action    = "sts:AssumeRole",
+        Effect    = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+
+
+resource "aws_s3_bucket" "my_bucket" {
+  bucket = "ozieblomichal-fastapi-template-bucket" 
+  acl    = "private"
+
+  tags = {
+    Name = "MojBucket"
+  }
+}
+
+output "s3_bucket_name" {
+  value = aws_s3_bucket.my_bucket.bucket
+}
+
+
+resource "aws_iam_role_policy_attachment" "s3_access_policy_attachment" {
+  role       = aws_iam_role.ec2_s3_access_role.name
+  policy_arn = aws_iam_policy.s3_access_policy.arn
+}
+
+
 resource "aws_instance" "my_ec2_instance" {
   ami           = "ami-0905a3c97561e0b69"  
   instance_type = "t2.micro"
@@ -89,12 +162,14 @@ resource "aws_instance" "my_ec2_instance" {
 
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
 
+  iam_instance_profile = aws_iam_instance_profile.ec2_s3_access_profile.name
+
   user_data = <<-EOF
               #!/bin/bash
               apt-get update -y
               apt-get install -y docker.io
               docker pull ozieblomichal/fastapi-template:amd
-              docker run -d -p 80:80 ozieblomichal/fastapi-template:amd
+              docker run -d -p 80:80 -e S3_BUCKET_NAME=${aws_s3_bucket.my_bucket.bucket} ozieblomichal/fastapi-template:amd
               EOF
 
   tags = {
