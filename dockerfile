@@ -47,7 +47,7 @@ ENV POETRY_NO_INTERACTION=1 \
 
 COPY pyproject.toml poetry.lock ./
 
-RUN poetry install --no-root && rm -rf $POETRY_CACHE_DIR
+RUN poetry install --no-root && rm -rf $POETRY_CACHE_DIR --without dev
 
 COPY ./src /src
 
