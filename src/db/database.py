@@ -22,7 +22,6 @@ else:
     engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 
-
 # Creating a session factory for SQLAlchemy. Sessions are used to manage database operations.
 # `autocommit=False` means SQLAlchemy will not commit transactions automatically,
 # giving more control over when to commit.
@@ -36,7 +35,3 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # This is essential to create the database schema before performing any operations.
 # It ensures that the database tables and relationships are set up according to the defined models.
 models.Base.metadata.create_all(bind=engine)
-
-
-
-

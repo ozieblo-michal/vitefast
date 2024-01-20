@@ -38,7 +38,6 @@ def test_read_dummy(client):
     assert response.headers["content-type"] == "application/json"
 
 
-
 def test_rate_limiter(client):
     for _ in range(5):
         response = client.get("/dummy")

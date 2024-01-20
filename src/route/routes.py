@@ -64,7 +64,7 @@ def read_dummy(request: Request, dummy_id: int, db: Session = Depends(get_db)):
 @router.post("/", status_code=201, response_model=Dummy)
 @limiter.limit("5/minute")
 def create_dummy(
-    request: Request, 
+    request: Request,
     dummy: Dummy,
     db: Session = Depends(get_db),
     current_user: User = Depends(auth.get_current_active_user),
@@ -75,7 +75,7 @@ def create_dummy(
 @router.put("/{dummy_id}", response_model=Dummy)
 @limiter.limit("5/minute")
 def modify_completely(
-    request: Request, 
+    request: Request,
     dummy_id: int,
     dummy: Dummy,
     db: Session = Depends(get_db),
@@ -87,7 +87,7 @@ def modify_completely(
 @router.patch("/{dummy_id}", response_model=DummyPatch)
 @limiter.limit("5/minute")
 def modify_partially(
-    request: Request, 
+    request: Request,
     dummy_id: int,
     dummy: DummyPatch,
     db: Session = Depends(get_db),
@@ -99,7 +99,7 @@ def modify_partially(
 @router.delete("/{dummy_id}", status_code=204)
 @limiter.limit("5/minute")
 def delete_dummy(
-    request: Request, 
+    request: Request,
     dummy_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(auth.get_current_active_user),

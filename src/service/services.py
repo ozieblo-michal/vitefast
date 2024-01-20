@@ -41,11 +41,12 @@ def create(dummy: schemas.Dummy, db: Session):
         models.Dummy: The newly created 'Dummy' model object, now stored in the database.
     """
 
-    existing_dummy = db.query(models.Dummy).filter(models.Dummy.name == dummy.name).first()
+    existing_dummy = (
+        db.query(models.Dummy).filter(models.Dummy.name == dummy.name).first()
+    )
     if existing_dummy:
         # logger.error("Duplicate")
         raise ValueError(f"Record including name '{dummy.name}' already exists")
-
 
     # Mapping the Pydantic schema object to the SQLAlchemy model
     sqlalchemy_model = models.Dummy()
