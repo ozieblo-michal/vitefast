@@ -254,7 +254,7 @@ resource "aws_instance" "my_ec2_instance" {
               BUCKET_NAME="${aws_s3_bucket.my_bucket.bucket}"
               LOG_DIRECTORY="/home/ubuntu/myapp-logs"
               CURRENT_HOUR=$$(date +'%Y-%m-%d %H')
-              NEXT_HOUR=$$(date -d "$CURRENT_HOUR 1 hour" +'%Y-%m-%d %H')
+              NEXT_HOUR=$$(date -d "$$CURRENT_HOUR 1 hour" +'%Y-%m-%d %H')
 
               LOG_FILE="$${LOG_DIRECTORY}/$${CURRENT_HOUR}:00-$${NEXT_HOUR:11:2}:00.log"
 
