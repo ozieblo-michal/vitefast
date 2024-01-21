@@ -95,8 +95,12 @@ poetry run python -m pytest .
 ## Cloud infrastructure diagram (x86_64 EC2)
 ![Cloud infrastructure diagram](cloudschema.drawio.png "Cloud infrastructure diagram")
 
+After executing the terraform script, validate via EC2 console using (for example):
 ```zsh
-sudo apt install docker.io
-sudo docker pull ozieblomichal/fastapi-template:amd
-sudo docker run -d -p 80:80 <<IMAGE_ID>>
+sudo aws s3 ls s3://ozieblomichal-fastapi-template-bucket
+sudo docker logs container_name
+sudo docker exec -it container_name bin/sh
+LATEST_LOG=$(sudo aws s3 ls s3://ozieblomichal-fastapi-template-bucket/logs/ --recursive | sort | tail -n 1 | awk '{print substr($0, index($0, $4))}')
+echo $LATEST_LOG
+sudo aws s3 cp "s3://ozieblomichal-fastapi-template-bucket/${LATEST_LOG}" - | cat
 ```

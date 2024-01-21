@@ -32,9 +32,7 @@ timestamp = f"{date_str} {hour_str}-{next_hour_str}"
 
 log_path = f"logs/{timestamp}.log"
 
-bucket_name = os.getenv("S3_BUCKET_NAME")
-
-logger = configure_logger(log_path, bucket_name)
+logger = configure_logger(log_path)
 
 # from auth.auth import pwd_context
 # print(f'{pwd_context.hash("muminek")}')
