@@ -23,9 +23,9 @@ logging.getLogger().setLevel(logging.INFO)
 current_datetime = datetime.now()
 
 date_str = current_datetime.strftime("%Y-%m-%d")
-hour_str = current_datetime.strftime("%H:00")
+hour_str = current_datetime.strftime("%H:00") + timedelta(hours=1)
 
-next_hour = current_datetime + timedelta(hours=1)
+next_hour = current_datetime + timedelta(hours=2)
 next_hour_str = next_hour.strftime("%H:00")
 
 timestamp = f"{date_str} {hour_str}-{next_hour_str}"
