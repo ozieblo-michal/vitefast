@@ -3,20 +3,22 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from route import auth, files, routes, route_limiter
 
-# import logging
+import logging
 from datetime import datetime, timedelta
 
 # from mangum import Mangum
+
+import os
 
 
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 
-# from configure_logger import configure_logger
+from configure_logger import configure_logger
 
-# logging.basicConfig()
-# logging.getLogger().setLevel(logging.INFO)
+logging.basicConfig()
+logging.getLogger().setLevel(logging.INFO)
 
 current_datetime = datetime.now()
 
@@ -30,7 +32,9 @@ timestamp = f"{date_str} {hour_str}-{next_hour_str}"
 
 log_path = f"logs/{timestamp}.log"
 
-# logger = configure_logger(log_path)
+bucket_name = os.getenv("S3_BUCKET_NAME")
+
+logger = configure_logger(log_path, bucket_name)
 
 # from auth.auth import pwd_context
 # print(f'{pwd_context.hash("muminek")}')
