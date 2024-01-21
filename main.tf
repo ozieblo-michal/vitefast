@@ -82,14 +82,6 @@ resource "aws_security_group" "allow_ssh_http" {
 }
 
 
-
-
-
-
-
-
-
-
 resource "aws_iam_policy" "s3_access_policy" {
   name        = "S3AccessPolicy"
   description = "S3 access policy for EC2 instances"
@@ -110,6 +102,11 @@ resource "aws_iam_policy" "s3_access_policy" {
           "${aws_s3_bucket.my_bucket.arn}/*"
         ]
       },
+      {
+        Action = "s3:ListAllMyBuckets",
+        Effect = "Allow",
+        Resource = "*"
+      }
     ]
   })
 }
@@ -136,12 +133,14 @@ resource "aws_iam_role" "ec2_s3_access_role" {
 
 resource "aws_s3_bucket" "my_bucket" {
   bucket = "ozieblomichal-fastapi-template-bucket" 
-  acl    = "private"
 
   tags = {
     Name = "MojBucket"
   }
 }
+
+
+
 
 output "s3_bucket_name" {
   value = aws_s3_bucket.my_bucket.bucket
@@ -151,7 +150,16 @@ output "s3_bucket_name" {
 resource "aws_iam_role_policy_attachment" "s3_access_policy_attachment" {
   role       = aws_iam_role.ec2_s3_access_role.name
   policy_arn = aws_iam_policy.s3_access_policy.arn
+
+  
 }
+
+
+resource "aws_iam_instance_profile" "ec2_s3_access_profile" {
+  name = "EC2S3AccessProfile"
+  role = aws_iam_role.ec2_s3_access_role.name
+}
+
 
 
 resource "aws_instance" "my_ec2_instance" {
@@ -168,9 +176,36 @@ resource "aws_instance" "my_ec2_instance" {
               #!/bin/bash
               apt-get update -y
               apt-get install -y docker.io
-              docker pull ozieblomichal/fastapi-template:amd
-              docker run -d -p 80:80 -e S3_BUCKET_NAME=${aws_s3_bucket.my_bucket.bucket} ozieblomichal/fastapi-template:amd
+              docker pull ozieblomichal/fastapi-template:s3
+              mkdir /home/ubuntu/myapp-logs
+              docker run -d -p 80:80 -e S3_BUCKET_NAME=${aws_s3_bucket.my_bucket.bucket} -v /home/ubuntu/myapp-logs:/logs ozieblomichal/fastapi-template:s2
               EOF
+  
+  
+              # <<-EOF
+              # #!/bin/bash
+              # apt-get update -y
+              # apt-get install -y docker.io
+              # apt-get install -y awscli
+              # docker pull ozieblomichal/fastapi-template:s3
+              # mkdir /home/ubuntu/myapp-logs
+              # docker run -d -p 80:80 -e S3_BUCKET_NAME=${aws_s3_bucket.my_bucket.bucket} -v /home/ubuntu/myapp-logs:/logs ozieblomichal/fastapi-template:s3
+
+              # cat <<'SCRIPT' >/home/ubuntu/upload_logs_to_s3.sh
+              # #!/bin/bash
+              # BUCKET_NAME="${aws_s3_bucket.my_bucket.bucket}"
+              # LOG_DIRECTORY="/home/ubuntu/myapp-logs"
+              # LOG_FILE="app.log"
+              # S3_KEY="logs/\$(date +'%Y-%m-%d-%H-%M').log"
+              # aws s3 cp "\$LOG_DIRECTORY/\$LOG_FILE" "s3://\$BUCKET_NAME/\$S3_KEY"
+              # > "\$LOG_DIRECTORY/\$LOG_FILE"
+              # SCRIPT
+
+              # chmod +x /home/ubuntu/upload_logs_to_s3.sh
+
+              # (crontab -l 2>/dev/null; echo "*/10 * * * * /home/ubuntu/upload_logs_to_s3.sh") | crontab -
+
+              # EOF
 
   tags = {
     Name = "my-ec2-instance"
