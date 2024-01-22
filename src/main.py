@@ -6,7 +6,6 @@ from route import auth, files, routes, route_limiter
 import logging
 from datetime import datetime, timedelta
 
-# from mangum import Mangum
 
 import os
 
@@ -23,7 +22,9 @@ logging.getLogger().setLevel(logging.INFO)
 current_datetime = datetime.now()
 
 date_str = current_datetime.strftime("%Y-%m-%d")
-hour_str = current_datetime.strftime("%H:00") + timedelta(hours=1)
+
+hour = current_datetime + timedelta(hours=1)
+hour_str = hour.strftime("%H:00")
 
 next_hour = current_datetime + timedelta(hours=2)
 next_hour_str = next_hour.strftime("%H:00")

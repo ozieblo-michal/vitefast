@@ -8,6 +8,9 @@ variable "region" {
 }
 
 
+data "aws_caller_identity" "current" {}
+
+
 resource "aws_vpc" "my_vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
@@ -169,7 +172,7 @@ resource "aws_iam_role_policy_attachment" "s3_access_policy_attachment" {
 resource "aws_cloudwatch_log_group" "my_log_group" {
   name = "/aws/ec2/my-log-group"
 
-  retention_in_days = 3
+  retention_in_days = 1
 
   tags = {
     Name = "MyLogGroup"
@@ -204,12 +207,11 @@ resource "aws_iam_policy" "ec2_cloudwatch_log_policy" {
         Action = [
           "logs:CreateLogStream",
           "logs:PutLogEvents",
-          "logs:DescribeLogStreams"
+          "logs:DescribeLogStreams",
+          "logs:CreateLogGroup"
         ],
         Effect = "Allow",
-        Resource = [
-          "${aws_cloudwatch_log_group.my_log_group.arn}:*"
-        ]
+        Resource = "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/ec2/my-log-group:*"
       }
     ]
   })
@@ -247,9 +249,13 @@ resource "aws_instance" "my_ec2_instance" {
               apt-get install -y docker.io
               docker pull ozieblomichal/fastapi-template:s3
               mkdir /home/ubuntu/myapp-logs
+              
+              mkdir -p /var/awslogs/etc
+
               docker run -d -p 80:80 -e S3_BUCKET_NAME=${aws_s3_bucket.my_bucket.bucket} -v /home/ubuntu/myapp-logs:/logs ozieblomichal/fastapi-template:s3
               apt-get install -y awscli
               cat <<'SCRIPT' >/home/ubuntu/upload_logs_to_s3.sh
+
               #!/bin/bash
               BUCKET_NAME="${aws_s3_bucket.my_bucket.bucket}"
               LOG_DIRECTORY="/home/ubuntu/myapp-logs"
@@ -262,26 +268,32 @@ resource "aws_instance" "my_ec2_instance" {
               if [ -f "$$LOG_FILE" ]; then
                   aws s3 cp "$$LOG_FILE" "s3://$BUCKET_NAME/$S3_KEY"
               fi
-              cat > /tmp/awslogs.conf <<- EOM
-              [general]
-              state_file = /var/awslogs/state/agent-state
-              [/var/log/myapp]
-              file = $$LOG_FILE
-              log_group_name = myapp-log-group
-              log_stream_name = {instance_id}
-              datetime_format = %b %d %H:%M:%S
-              EOM
-              service awslogs stop
-              service awslogs start
               SCRIPT
               chmod +x /home/ubuntu/upload_logs_to_s3.sh
               (crontab -l 2>/dev/null; echo "*/1 * * * * /home/ubuntu/upload_logs_to_s3.sh") | crontab -
+
+              add-apt-repository ppa:deadsnakes/ppa
               apt-get update -y
-              apt-get install -y awscli
-              cd /tmp
-              curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
+              apt-get install -y python2.7
+
+              cd /home/ubuntu/ && curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
+
               chmod +x ./awslogs-agent-setup.py
-              ./awslogs-agent-setup.py -n -r ${var.region} -c /tmp/awslogs.conf
+              
+              cat > /tmp/awslogs.conf <<- EOM
+
+              [general]
+              state_file = /var/awslogs/state/agent-state
+
+              [/var/log/docker]
+              file = /var/log/docker.log
+              log_group_name = /aws/ec2/my-log-group
+              log_stream_name = {instance_id}
+              datetime_format = %Y-%m-%dT%H:%M:%S.%f
+              EOM
+
+              python2.7 ./awslogs-agent-setup.py -n -r ${var.region} -c /tmp/awslogs.conf
+              
               systemctl enable awslogsd.service
               systemctl start awslogsd.service
               EOF

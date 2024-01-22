@@ -104,3 +104,16 @@ LATEST_LOG=$(sudo aws s3 ls s3://ozieblomichal-fastapi-template-bucket/logs/ --r
 echo $LATEST_LOG
 sudo aws s3 cp "s3://ozieblomichal-fastapi-template-bucket/${LATEST_LOG}" - | cat
 ```
+
+
+/var/log/syslog
+
+/var/log/awslogs.log
+
+
+sudo find / -type f -name "awslogs-agent-setup.py"
+
+
+sudo systemctl status awslogsd
+
+
