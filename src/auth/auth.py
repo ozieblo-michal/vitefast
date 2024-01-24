@@ -6,8 +6,14 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 import auth.utils as utils
-from db.fake_db import db
+# from db.fake_db import db
 from schema.schemas import TokenData, User, UserInDB
+
+
+import model.models as models
+
+
+from sqlalchemy.orm import Session
 
 # openssl rand -hex 32
 SECRET_KEY = "e69df904acecb0f9420801b460fc1f85f774b418df3eb3d18906736d5ecd23ae"
@@ -43,26 +49,17 @@ def verify_password(plain_password, hashed_password):
     return utils.pwd_context.verify(plain_password, hashed_password)
 
 
-# Function to retrieve user data from the database based on the username.
-# Helps in authenticating the user and getting user-related data.
-def get_user(db, username: str):
-    """Retrieve a user from the database by username.
+def get_user(db: Session, username: str) -> UserInDB | None:
 
-    Args:
-        db (dict): The database representation (usually a dictionary).
-        username (str): The username of the user to retrieve.
-
-    Returns:
-        UserInDB or None: The user object if found, None otherwise.
-    """
-    if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
+    db_user = db.query(models.User).filter(models.User.username == username).first()
+    if db_user:
+        return UserInDB(**db_user.__dict__)
+    return None
 
 
 # Function to authenticate the user by verifying the username and password.
 # Returns the user object if authentication is successful, otherwise False.
-def authenticate_user(db, username: str, password: str):
+def authenticate_user(db: Session, username: str, password: str):
     """Authenticate a user by username and password.
 
     Args:
@@ -101,6 +98,10 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
+
+
+
+
 # Dependency function to get the current user from the token.
 # Throws an error if the token is invalid, ensuring secure access to user-specific endpoints.
 async def get_current_user(token: str = Depends(oauth2_scheme)):
@@ -118,6 +119,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
+
         if username is None:
             raise credentials_exception()
         token_data = TokenData(username=username)
@@ -174,3 +176,4 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+

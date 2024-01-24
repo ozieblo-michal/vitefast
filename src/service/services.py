@@ -124,3 +124,19 @@ def get_one(db: Session, dummy_id: int):
         raise HTTPException(status_code=404, detail="Object not found")
 
     return sqlalchemy_model
+
+
+
+
+
+def create_user(db: Session, user: schemas.User):
+    db_user = models.User(username=user.username, 
+                          email=user.email, 
+                          full_name=user.full_name,
+                          hashed_password=user.hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+# TODO: put hashing here

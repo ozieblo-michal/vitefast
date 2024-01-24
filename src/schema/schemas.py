@@ -56,32 +56,33 @@ class TokenData(BaseModel):
 
 
 class User(BaseModel):
-    """
-    Pydantic model for user information.
 
-    Used for operations that require user data, like authentication and user management.
-
-    Attributes:
-        username (str): The username of the user.
-        email (str, optional): The email address of the user. Default is None.
-        full_name (str, optional): The full name of the user. Default is None.
-        disabled (bool, optional): Flag to indicate if the user account is disabled. Default is None.
-    """
 
     username: str
     email: str | None = None
     full_name: str | None = None
     disabled: bool | None = None
+    password: str
+
+
+
+class UserResponse(BaseModel):
+    username: str
+    email: str
+    full_name: str | None = None
+    disabled: bool | None = None
+
+    
 
 
 class UserInDB(User):
-    """
-    Extended Pydantic model for user information including hashed password.
 
-    Inherits from the User model and adds a hashed password for database storage.
 
-    Attributes:
-        hashed_password (str): The hashed password of the user.
-    """
+    hashed_password: str | None = None
 
-    hashed_password: str
+
+
+
+
+class DisableUserRequest(BaseModel):
+    password: str
