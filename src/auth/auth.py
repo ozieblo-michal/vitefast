@@ -7,10 +7,12 @@ from passlib.context import CryptContext
 
 import auth.utils as utils
 # from db.fake_db import db
-from schema.schemas import TokenData, User, UserInDB
+from schema.schemas import TokenData, User, UserInDB, UserResponse
 
 
 import model.models as models
+
+
 
 
 from sqlalchemy.orm import Session
@@ -19,6 +21,23 @@ from sqlalchemy.orm import Session
 SECRET_KEY = "e69df904acecb0f9420801b460fc1f85f774b418df3eb3d18906736d5ecd23ae"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+
+# todo, redundant with routes
+from db.database import SessionLocal
+def get_db():
+    """Dependency function to obtain a database session.
+
+    This function yields a SQLAlchemy session from a session factory upon request and closes it after use.
+
+    Yields:
+        Session: A SQLAlchemy session object to interact with the database.
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 def credentials_exception():
@@ -49,11 +68,11 @@ def verify_password(plain_password, hashed_password):
     return utils.pwd_context.verify(plain_password, hashed_password)
 
 
-def get_user(db: Session, username: str) -> UserInDB | None:
+async def get_user(db: Session, username: str) -> User | None:
 
     db_user = db.query(models.User).filter(models.User.username == username).first()
     if db_user:
-        return UserInDB(**db_user.__dict__)
+        return User(**db_user.__dict__)
     return None
 
 
@@ -70,10 +89,12 @@ def authenticate_user(db: Session, username: str, password: str):
     Returns:
         User or False: The authenticated user object, or False if authentication fails.
     """
+    
     user = get_user(db, username)
-    if not user or not verify_password(password, user.hashed_password):
+    
+    if not user or not verify_password(password, user.password):
         return False
-    return user
+    return UserResponse(**user.__dict__)
 
 
 # Function to create a JWT access token with an optional expiry.
@@ -104,7 +125,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 # Dependency function to get the current user from the token.
 # Throws an error if the token is invalid, ensuring secure access to user-specific endpoints.
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     """Get the current user from the provided token.
 
     Args:
@@ -133,7 +154,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 # Dependency function to get the current active user.
 # Throws an error if the user is disabled, ensuring only active users can access certain endpoints.
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
+async def get_current_active_user(current_user: UserResponse = Depends(get_current_user)):
     """Get the current active user.
 
     Args:
@@ -145,14 +166,17 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
     Raises:
         HTTPException: 400 error if the user is inactive.
     """
-    if current_user.disabled:
+
+    user = await current_user
+    if user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user
+    return user
+
 
 
 # Endpoint to handle login and return an access token.
 # Validates user credentials and returns a JWT token for authenticated sessions.
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+def login_for_access_token(db: Session, form_data: OAuth2PasswordRequestForm = Depends()):
     """Authenticate and return an access token for a valid user.
 
     Args:

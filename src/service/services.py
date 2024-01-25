@@ -129,11 +129,11 @@ def get_one(db: Session, dummy_id: int):
 
 
 
-def create_user(db: Session, user: schemas.User):
+def create_user(db: Session, user: schemas.UserInDB):
     db_user = models.User(username=user.username, 
                           email=user.email, 
                           full_name=user.full_name,
-                          hashed_password=user.hashed_password)
+                          password=user.hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

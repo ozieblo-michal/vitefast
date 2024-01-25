@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
     """Generate an access token for authenticated users.
 
     This endpoint handles the user login process. Upon successful authentication, it returns a JWT access token.
@@ -26,7 +26,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     Returns:
         Token: A JWT token encapsulated within a Token schema.
     """
-    return auth.login_for_access_token(form_data)
+    return auth.login_for_access_token(db, form_data)
 
 
 @router.get("/users/me/", response_model=User)
@@ -76,8 +76,9 @@ def hash_password(password: str) -> str:
 @router.post("/users/", response_model=UserResponse)
 def create_user(user: User, db: Session = Depends(get_db)):
     db_user = auth.get_user(db, username=user.username)
+  
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=400, detail="Login name already registered")
 
     user_in_db = UserInDB(**user.dict(), hashed_password=hash_password(user.password))
     return service.create_user(db=db, user=user_in_db)

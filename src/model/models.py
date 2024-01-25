@@ -36,7 +36,7 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     full_name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
+    password = Column(String)
     disabled = Column(Boolean, default=False)
 
 
