@@ -68,7 +68,7 @@ def verify_password(plain_password, hashed_password):
     return utils.pwd_context.verify(plain_password, hashed_password)
 
 
-async def get_user(db: Session, username: str) -> User | None:
+def get_user(db: Session, username: str) -> User | None:
 
     db_user = db.query(models.User).filter(models.User.username == username).first()
     if db_user:
