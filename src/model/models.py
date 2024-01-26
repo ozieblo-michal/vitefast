@@ -27,8 +27,6 @@ class Dummy(Base):
     optional_field = Column(String, nullable=True)
 
 
-
-
 class User(Base):
     __tablename__ = "users"
 
@@ -38,5 +36,3 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     password = Column(String)
     disabled = Column(Boolean, default=False)
-
-

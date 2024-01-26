@@ -6,13 +6,12 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 import auth.utils as utils
+
 # from db.fake_db import db
 from schema.schemas import TokenData, User, UserInDB, UserResponse
 
 
 import model.models as models
-
-
 
 
 from sqlalchemy.orm import Session
@@ -25,6 +24,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # todo, redundant with routes
 from db.database import SessionLocal
+
+
 def get_db():
     """Dependency function to obtain a database session.
 
@@ -69,7 +70,6 @@ def verify_password(plain_password, hashed_password):
 
 
 def get_user(db: Session, username: str) -> User | None:
-
     db_user = db.query(models.User).filter(models.User.username == username).first()
     if db_user:
         return User(**db_user.__dict__)
@@ -89,9 +89,9 @@ def authenticate_user(db: Session, username: str, password: str):
     Returns:
         User or False: The authenticated user object, or False if authentication fails.
     """
-    
+
     user = get_user(db, username)
-    
+
     if not user or not verify_password(password, user.password):
         return False
     return UserResponse(**user.__dict__)
@@ -119,13 +119,11 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-
-
-
-
 # Dependency function to get the current user from the token.
 # Throws an error if the token is invalid, ensuring secure access to user-specific endpoints.
-async def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+async def get_current_user(
+    db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
+):
     """Get the current user from the provided token.
 
     Args:
@@ -154,7 +152,9 @@ async def get_current_user(db: Session = Depends(get_db), token: str = Depends(o
 
 # Dependency function to get the current active user.
 # Throws an error if the user is disabled, ensuring only active users can access certain endpoints.
-async def get_current_active_user(current_user: UserResponse = Depends(get_current_user)):
+async def get_current_active_user(
+    current_user: UserResponse = Depends(get_current_user),
+):
     """Get the current active user.
 
     Args:
@@ -173,10 +173,11 @@ async def get_current_active_user(current_user: UserResponse = Depends(get_curre
     return user
 
 
-
 # Endpoint to handle login and return an access token.
 # Validates user credentials and returns a JWT token for authenticated sessions.
-def login_for_access_token(db: Session, form_data: OAuth2PasswordRequestForm = Depends()):
+def login_for_access_token(
+    db: Session, form_data: OAuth2PasswordRequestForm = Depends()
+):
     """Authenticate and return an access token for a valid user.
 
     Args:
@@ -200,4 +201,3 @@ def login_for_access_token(db: Session, form_data: OAuth2PasswordRequestForm = D
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
-

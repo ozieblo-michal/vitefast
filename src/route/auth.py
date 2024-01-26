@@ -7,7 +7,6 @@ from schema.schemas import Token, User, UserInDB, DisableUserRequest, UserRespon
 import service.services as service
 
 
-
 from sqlalchemy.orm import Session
 from route.routes import get_db
 
@@ -15,7 +14,9 @@ router = APIRouter()
 
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(
+    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
+):
     """Generate an access token for authenticated users.
 
     This endpoint handles the user login process. Upon successful authentication, it returns a JWT access token.
@@ -60,11 +61,10 @@ async def read_own_items(current_user: User = Depends(auth.get_current_active_us
     return [{"item_id": "Foo", "owner": current_user.username}]
 
 
-
-
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 def hash_password(password: str) -> str:
     if password is None:
@@ -72,11 +72,10 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 
-
 @router.post("/users/", response_model=UserResponse)
 def create_user(user: User, db: Session = Depends(get_db)):
     db_user = auth.get_user(db, username=user.username)
-  
+
     if db_user:
         raise HTTPException(status_code=400, detail="Login name already registered")
 
@@ -84,13 +83,10 @@ def create_user(user: User, db: Session = Depends(get_db)):
     return service.create_user(db=db, user=user_in_db)
 
 
-
-
-
-
-
 @router.patch("/users/{username}/disable", response_model=User)
-def disable_user(username: str, disable_request: DisableUserRequest, db: Session = Depends(get_db)):
+def disable_user(
+    username: str, disable_request: DisableUserRequest, db: Session = Depends(get_db)
+):
     db_user = auth.get_user(db, username=username)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -101,9 +97,6 @@ def disable_user(username: str, disable_request: DisableUserRequest, db: Session
     db_user.disabled = True
     db.commit()
     return db_user
-
-
-
 
 
 # add get by ID

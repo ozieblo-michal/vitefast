@@ -42,16 +42,14 @@ async def download_file(filename: str):
     else:
         return {"error": "File not found"}
 
+
 @router.post("/uploads3/")
 async def upload_to_s3(file: UploadFile = File(...)):
-
     allowed_extensions = {"txt", "csv", "jpg", "png", "pdf"}
 
     if file.filename.split(".")[-1] not in allowed_extensions:
         raise HTTPException(status_code=400, detail="Unsupported file extension.")
-    
-    
-    
+
     bucket_name = os.getenv("S3_BUCKET_NAME")
     file_name_in_s3 = "folder/" + file.filename
     content = await file.read()

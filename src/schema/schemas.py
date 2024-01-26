@@ -56,14 +56,11 @@ class TokenData(BaseModel):
 
 
 class User(BaseModel):
-
-
     username: str
     email: str | None = None
     full_name: str | None = None
     disabled: bool | None = None
     password: str
-
 
 
 class UserResponse(BaseModel):
@@ -72,16 +69,9 @@ class UserResponse(BaseModel):
     full_name: str | None = None
     disabled: bool | None = None
 
-    
-
 
 class UserInDB(User):
-
-
     hashed_password: str | None = None
-
-
-
 
 
 class DisableUserRequest(BaseModel):

@@ -2,11 +2,10 @@ import logging
 
 
 def configure_logger(log_path: str) -> logging.Logger:
-
     logger = logging.getLogger("configure_logger")
 
     logger.setLevel(logging.DEBUG)
-    # logger.propagate = False 
+    # logger.propagate = False
 
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
