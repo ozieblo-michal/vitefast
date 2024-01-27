@@ -1,13 +1,36 @@
-# Module templates in FastAPI
-
-#### Keywords: CRUD, REST API
-
 ![Python Version](https://img.shields.io/badge/Python-3.12-blue.svg)
-![Docker Alpine](https://img.shields.io/badge/Docker-Alpine-blue.svg)
+![Alpine Version](https://img.shields.io/badge/Alpine-3.14-green.svg)
+![Postgres](https://img.shields.io/badge/Postgres-16.1--alpine3.19-red.svg)
 
+# FastAPI application installer :rocket:
 
-## Purpose
-This repository serves as a collection of templates for various tasks in FastAPI, aimed at facilitating rapid backend development for applications. It's also a training repository for understanding and implementing FastAPI features.
+### Introduction :wave:
+
+This repository embodies a unique package that serves several critical objectives with a focus on educational value, ease of deployment, customization, and adherence to best coding and architectural practices as of January 2024. The primary goal is to provide a comprehensive learning experience, guiding users through the rationale behind each implementation, understanding the 'why' and 'how', rather than just the 'what'.
+
+### Educational Value :school:
+
+**Thorough Documentation:** It is committed to meticulously document every aspect of the package. The documentation emphasizes the purpose and reasoning behind each feature and implementation. This approach aims to enhance the learning experience for users, providing them with a deeper understanding of the underlying concepts and choices made during development.
+
+### Streamlined AWS Integration :cloud:
+
+**One-Line Deployment:** The package is designed for seamless integration with AWS services, enabling users to launch a basic application with just a single line of command in the terminal, assuming pre-configured AWS host connection settings. This feature significantly simplifies the process of deploying and managing applications on the cloud.
+
+### Customization and Flexibility :wrench:
+
+**Rapid Adaptation:** Acknowledging the diverse needs of different projects, the package is engineered to allow quick and straightforward adjustments. Users can easily tailor the package to meet specific requirements within a basic scope, providing both flexibility and efficiency in development.
+
+### Technology and Best Practices :star:
+
+**Current Package Versions:** Reflecting the latest advancements as of January 2024, ensuring that all package versions used are up-to-date, offering users the benefits of the latest features, security patches, and optimizations.
+
+**Best Coding and Architectural Practices:** The package is built with a strong emphasis on best practices in coding and architecture. This includes the use of Alpine-based images, known for their lightweight and security-focused design. These practices not only enhance the performance and security of applications but also provide a reference point for users to learn and incorporate these practices into their own development workflows.
+
+### Conclusion :bulb:
+
+This package is more than just a tool for development; it's a learning journey for modern software practices, cloud integration, and effective application deployment. Whether you are a beginner looking to understand the intricacies of AWS services and application deployment, or an experienced developer seeking a quick and reliable solution for your AWS-based projects, this package is crafted to meet your needs. Join in exploring the potential of cloud computing with a solid foundation in best practices and cutting-edge technology.
+
+I welcome contributions, feedback, and inquiries to continually improve and update this repository. Let's build and learn together!
 
 ## About FastAPI
 FastAPI is a modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints. The key features are:
@@ -38,7 +61,7 @@ src/
     ├── schemas.py [Defines Pydantic models for data validation and serialization.]
     └── __init__.py [Initializes the schema package to encapsulate Pydantic models.]
 ├── route/
-    ├── routes.py [Defines the API routes/endpoints for the application.]
+    ├── crud.py [Defines CRUD routes/endpoints for the application.]
     └── __init__.py [Initializes the route package, grouping the route modules.]
 ├── tests/
     ├── __init__.py [Initializes the tests package, aggregating test modules.]
@@ -50,6 +73,11 @@ src/
 └── main.py [The main entry point for the FastAPI application, defining API routes.]
 
 ```
+
+
+
+
+
 
 
 ## How to run the app on the localhost
@@ -64,6 +92,23 @@ in web browser, open `http://localhost:8000/docs`
 
 ## How to run the app via Docker
 #### How to build image, run container and remove all after the job
+
+```zsh
+docker-compose up
+```
+
+issues:
+```zsh
+
+netstat -an | grep 5432
+brew services stop postgresql
+
+or stop process via Activity Monitor
+
+docker-compose up --build
+```
+
+single container (currently invalid, note)
 ```zsh
 docker build -t fastapi-template:dev . --no-cache
 docker run -p 80:8000 fastapi-template:dev
@@ -103,17 +148,12 @@ sudo docker exec -it container_name bin/sh
 LATEST_LOG=$(sudo aws s3 ls s3://ozieblomichal-fastapi-template-bucket/logs/ --recursive | sort | tail -n 1 | awk '{print substr($0, index($0, $4))}')
 echo $LATEST_LOG
 sudo aws s3 cp "s3://ozieblomichal-fastapi-template-bucket/${LATEST_LOG}" - | cat
-```
-
-
 /var/log/syslog
-
 /var/log/awslogs.log
-
-
 sudo find / -type f -name "awslogs-agent-setup.py"
-
-
 sudo systemctl status awslogsd
-
-
+crontab -l
+cat /var/log/cloud-init-output.log
+grep "crontab" /var/log/cloud-init-output.log
+grep "log_group_name" /var/log/awslogs.log
+```
