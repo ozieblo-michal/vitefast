@@ -65,6 +65,13 @@ resource "aws_security_group" "allow_ssh_http" {
   vpc_id = aws_vpc.my_vpc.id
 
   ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -164,11 +171,6 @@ resource "aws_iam_role_policy_attachment" "s3_access_policy_attachment" {
 }
 
 
-
-
-
-
-
 resource "aws_cloudwatch_log_group" "my_log_group" {
   name = "/aws/ec2/my-log-group"
 
@@ -229,7 +231,6 @@ resource "aws_iam_instance_profile" "ec2_s3_access_profile" {
 }
 
 
-
 resource "aws_iam_policy" "ec2_cloudwatch_logs_policy" {
   name        = "EC2CloudWatchLogsPolicy"
   description = "Polityka umożliwiająca EC2 wysyłanie logów do CloudWatch Logs"
@@ -257,6 +258,36 @@ resource "aws_iam_role_policy_attachment" "ec2_cloudwatch_logs_policy_attachment
 }
 
 
+
+resource "aws_db_instance" "my_postgres_db" {
+  allocated_storage    = 20
+  storage_type         = "gp2"
+  engine               = "postgres"
+  engine_version       = "13.4"
+  instance_class       = "db.t3.micro"
+  name                 = "mydatabase"
+  username             = "postgres"
+  password             = "mocnehaslo123"
+  parameter_group_name = "default.postgres13"
+  skip_final_snapshot  = true
+
+  vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
+
+  db_subnet_group_name = aws_db_subnet_group.my_db_subnet_group.name
+
+  tags = {
+    Name = "MojaBazaDanychPostgres"
+  }
+}
+
+resource "aws_db_subnet_group" "my_db_subnet_group" {
+  name       = "my-db-subnet-group"
+  subnet_ids = [aws_subnet.my_public_subnet.id]
+
+  tags = {
+    Name = "MyDBSubnetGroup"
+  }
+}
 
 resource "aws_instance" "my_ec2_instance" {
   ami           = "ami-0905a3c97561e0b69"  
