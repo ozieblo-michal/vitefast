@@ -11,20 +11,47 @@ import main
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 
 
-@pytest.fixture
-def client():
-    """
-    Pytest fixture to create a TestClient instance for testing FastAPI endpoints.
-
-    This fixture creates a client using FastAPI's TestClient, allowing HTTP requests to be made to the app for testing purposes.
-
-    Returns:
-        TestClient: A FastAPI TestClient instance with the application loaded for testing.
-    """
-    return TestClient(main.app)
+from model.models import Dummy, Base
 
 
-def test_read_dummy(client):
+from db.dependencies import get_db
+
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from sqlalchemy.pool import StaticPool
+
+client = TestClient(main.app)
+
+
+@pytest.fixture(scope="module")
+def test_db():
+    test_engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+    Base.metadata.create_all(bind=test_engine)
+    main.app.dependency_overrides[get_db] = lambda: SessionLocal()
+
+    try:
+        db = SessionLocal()
+        item = Dummy(
+            name="item1",
+            description="dummy description",
+            optional_field="optional text",
+        )
+        db.add(item)
+        db.commit()
+        yield db
+    finally:
+        db.close()
+
+
+def test_read_dummy(test_db):
     """
     Test the '/dummy' GET endpoint.
 
@@ -33,12 +60,13 @@ def test_read_dummy(client):
     Args:
         client (TestClient): The FastAPI TestClient instance used to make HTTP requests to the application.
     """
+
     response = client.get("/dummy")
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
 
 
-def test_rate_limiter(client):
+def test_rate_limiter(test_db):
     for _ in range(5):
         response = client.get("/dummy")
         assert response.status_code in [200, 429]

@@ -40,7 +40,7 @@ class User(Base):
         password (str): The encrypted password of the user. Ensure this is not exposed in API responses.
         disabled (bool): A flag indicating whether the user account is disabled. Defaults to False.
     """
-    
+
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)

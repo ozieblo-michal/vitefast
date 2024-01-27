@@ -207,10 +207,3 @@ def test_upload_to_s3_moto(test_app, s3_mock):
     objects_in_bucket = s3_mock.list_objects(Bucket="test-bucket")
     filenames = [obj["Key"] for obj in objects_in_bucket.get("Contents", [])]
     assert "folder/testfile.txt" in filenames
-
-    # TODO: ressurect logging
-    # TODO: formularz
-    # TODO: baza postgres, lokalna i na serwerze
-    # TODO: setup na azure
-    # TODO: podkladka pod tool do ML
-    # TODO: podkladka do finansow

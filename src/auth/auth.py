@@ -16,29 +16,13 @@ import model.models as models
 
 from sqlalchemy.orm import Session
 
+
+from db.dependencies import get_db
+
 # openssl rand -hex 32
 SECRET_KEY = "e69df904acecb0f9420801b460fc1f85f774b418df3eb3d18906736d5ecd23ae"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-
-# todo, redundant with routes
-from db.database import SessionLocal
-
-
-def get_db():
-    """Dependency function to obtain a database session.
-
-    This function yields a SQLAlchemy session from a session factory upon request and closes it after use.
-
-    Yields:
-        Session: A SQLAlchemy session object to interact with the database.
-    """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 def credentials_exception():
@@ -69,7 +53,9 @@ def verify_password(plain_password, hashed_password):
     return utils.pwd_context.verify(plain_password, hashed_password)
 
 
-def get_user(db: Session, username: str) -> User | None:
+def get_user(username: str, db: Session = Depends(get_db)) -> User | None:
+    print(f"Database session id: {id(db)}")
+
     db_user = db.query(models.User).filter(models.User.username == username).first()
     if db_user:
         return User(**db_user.__dict__)
@@ -78,7 +64,7 @@ def get_user(db: Session, username: str) -> User | None:
 
 # Function to authenticate the user by verifying the username and password.
 # Returns the user object if authentication is successful, otherwise False.
-def authenticate_user(db: Session, username: str, password: str):
+def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
     """Authenticate a user by username and password.
 
     Args:
@@ -89,11 +75,11 @@ def authenticate_user(db: Session, username: str, password: str):
     Returns:
         User or False: The authenticated user object, or False if authentication fails.
     """
-
-    user = get_user(db, username)
+    user = get_user(username, db)
 
     if not user or not verify_password(password, user.password):
         return False
+
     return UserResponse(**user.__dict__)
 
 
@@ -144,7 +130,7 @@ async def get_current_user(
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception()
-    user = get_user(db, username=token_data.username)
+    user = get_user(username=token_data.username, db=db)
     if user is None:
         raise credentials_exception()
     return user
@@ -176,7 +162,7 @@ async def get_current_active_user(
 # Endpoint to handle login and return an access token.
 # Validates user credentials and returns a JWT token for authenticated sessions.
 def login_for_access_token(
-    db: Session, form_data: OAuth2PasswordRequestForm = Depends()
+    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ):
     """Authenticate and return an access token for a valid user.
 
@@ -189,7 +175,9 @@ def login_for_access_token(
     Raises:
         HTTPException: 401 error if the user cannot be authenticated.
     """
-    user = authenticate_user(db, form_data.username, form_data.password)
+
+    user = authenticate_user(form_data.username, form_data.password, db)
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

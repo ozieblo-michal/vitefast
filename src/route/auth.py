@@ -8,7 +8,7 @@ import service.services as service
 
 
 from sqlalchemy.orm import Session
-from route.routes import get_db
+from db.dependencies import get_db
 
 router = APIRouter()
 
