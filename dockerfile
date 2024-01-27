@@ -53,4 +53,6 @@ RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR
 
 COPY ./src /src
 
+RUN mkdir /logs
+
 CMD ["poetry", "run", "python", "src/main.py"]
