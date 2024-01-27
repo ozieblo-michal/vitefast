@@ -1,6 +1,11 @@
 ![Python Version](https://img.shields.io/badge/Python-3.12-blue.svg)
 ![Alpine Version](https://img.shields.io/badge/Alpine-3.14-green.svg)
 ![Postgres](https://img.shields.io/badge/Postgres-16.1--alpine3.19-red.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.108.0-009688.svg)
+[![Docker and Pytest Workflow](https://github.com/ozieblo-michal/fastAPI-templates/actions/workflows/docker_and_pytest.yml/badge.svg)](https://github.com/ozieblo-michal/fastAPI-templates/actions/workflows/docker_and_pytest.yml)
+![Black](https://img.shields.io/badge/code%20style-black-000000.svg)
+![Pylint](https://img.shields.io/badge/linter-pylint-blue.svg)
+
 
 # FastAPI application installer :rocket:
 
