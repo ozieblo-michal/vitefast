@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(
-    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     return auth.login_for_access_token(db, form_data)
 
@@ -44,7 +44,8 @@ def hash_password(password: str) -> str:
 
 @router.post("/users/", response_model=UserResponse)
 def create_user(user: User, db: Session = Depends(get_db)):
-    db_user = auth.get_user(db, username=user.username)
+
+    db_user = auth.get_user(db=db, username=user.username)
 
     if db_user:
         raise HTTPException(status_code=400, detail="Login name already registered")

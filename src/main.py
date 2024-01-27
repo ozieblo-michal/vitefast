@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from route import auth, files, routes, route_limiter
+from route import auth, files, route_limiter, crud
 
 import uvicorn
 
@@ -29,7 +29,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(routes.router, prefix="/dummy")
+app.include_router(crud.router, prefix="/dummy")
 app.include_router(auth.router)
 app.include_router(files.router)
 
