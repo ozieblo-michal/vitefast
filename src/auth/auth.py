@@ -167,7 +167,7 @@ async def get_current_active_user(
         HTTPException: 400 error if the user is inactive.
     """
 
-    user = await current_user
+    user = current_user
     if user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return user

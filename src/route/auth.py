@@ -17,19 +17,17 @@ router = APIRouter()
 async def login_for_access_token(
     db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ):
-
     return auth.login_for_access_token(db, form_data)
+
 
 # TODO: add get user by ID
 @router.get("/users/me/", response_model=User)
 async def read_users_me(current_user: User = Depends(auth.get_current_active_user)):
-
     return current_user
 
 
 @router.get("/users/me/items/")
 async def read_own_items(current_user: User = Depends(auth.get_current_active_user)):
-
     return [{"item_id": "Foo", "owner": current_user.username}]
 
 
