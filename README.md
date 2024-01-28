@@ -9,6 +9,9 @@
 
 # FastAPI application installer :rocket:
 
+### Cloud infrastructure diagram (x86_64 EC2)
+![Cloud infrastructure diagram](cloudschema.drawio.png "Cloud infrastructure diagram")
+
 ### Introduction :wave:
 
 This repository embodies a unique package that serves several critical objectives with a focus on educational value, ease of deployment, customization, and adherence to best coding and architectural practices as of January 2024. The primary goal is to provide a comprehensive learning experience, guiding users through the rationale behind each implementation, understanding the 'why' and 'how', rather than just the 'what'.
@@ -31,13 +34,15 @@ This repository embodies a unique package that serves several critical objective
 
 **Best Coding and Architectural Practices:** The package is built with a strong emphasis on best practices in coding and architecture. This includes the use of Alpine-based images, known for their lightweight and security-focused design. These practices not only enhance the performance and security of applications but also provide a reference point for users to learn and incorporate these practices into their own development workflows.
 
-### Conclusion :bulb:
+### Prerequisites for Working with the Package :school:
 
-This package is more than just a tool for development; it's a learning journey for modern software practices, cloud integration, and effective application deployment. Whether you are a beginner looking to understand the intricacies of AWS services and application deployment, or an experienced developer seeking a quick and reliable solution for your AWS-based projects, this package is crafted to meet your needs. Join in exploring the potential of cloud computing with a solid foundation in best practices and cutting-edge technology.
+Before diving into the package, it's important to familiarize yourself with a few foundational tools and concepts:
 
-I welcome contributions, feedback, and inquiries to continually improve and update this repository. Let's build and learn together!
+- **FastAPI Documentation**: A thorough understanding of FastAPI, a modern, fast web framework for building APIs with Python, is crucial. Familiarize yourself with its key features and functionalities by reviewing [FastAPI Documentation](https://fastapi.tiangolo.com/).
+- **Basic Docker Commands**: Knowledge of Docker, a tool designed to make it easier to create, deploy, and run applications using containers, is essential. Brush up on the [Docker Documentation](https://docs.docker.com/get-started/overview/).
+- **Basic Terraform Commands**: Terraform, used for building, changing, and versioning infrastructure safely and efficiently, is another key tool. Review the [Terraform Documentation](https://www.terraform.io/docs/index.html) to understand its core principles and commands.
 
-## About FastAPI
+### Why FastAPI, not Flask :muscle:
 FastAPI is a modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints. The key features are:
 
 - **Fast**: Very high performance, on par with NodeJS and Go (thanks to Starlette and Pydantic). One of the fastest Python frameworks available.
@@ -48,117 +53,88 @@ FastAPI is a modern, fast (high-performance) web framework for building APIs wit
 - **Short**: Minimize code duplication. Multiple features from each parameter declaration. Fewer bugs.
 - **Robust**: Get production-ready code. With automatic interactive documentation.
 
+### Advantages of Using Alpine Images for Ubuntu and Postgres :mount_fuji:
+The use of Alpine Linux images for our Ubuntu and Postgres containers provides substantial benefits, particularly in terms of efficiency and security. Alpine Linux is renowned for its minimalistic size, which results in significantly lighter and faster containers. This not only reduces the time taken for image downloads and deployments but also lessens the resource consumption, making it ideal for environments with limited resources. Furthermore, Alpine's minimalistic nature means fewer components are susceptible to vulnerabilities, enhancing the overall security of the containers. This makes Alpine an excellent choice for streamlined, secure, and efficient containerized applications.
 
-## Package structure
-```
-src/
-├── model/
-    ├──models.py [Defines SQLAlchemy ORM models representing database tables.]
-    └── __init__.py [Initializes the model package, allowing for its modules to be imported elsewhere.]
-├── db/
-    ├── database.py [Sets up and configures the database connection and session handling.]
-    ├── fake_db.py [Provides a mock database for testing or development purposes.]
-    └── __init__.py [Initializes the db package to enable database configurations.]
-├── service/
-    ├── services.py [Contains business logic or services related to 'Dummy' entities.]
-    └── __init__.py [Initializes the service package for organizing business logic.]
-├── schema/
-    ├── schemas.py [Defines Pydantic models for data validation and serialization.]
-    └── __init__.py [Initializes the schema package to encapsulate Pydantic models.]
-├── route/
-    ├── crud.py [Defines CRUD routes/endpoints for the application.]
-    └── __init__.py [Initializes the route package, grouping the route modules.]
-├── tests/
-    ├── __init__.py [Initializes the tests package, aggregating test modules.]
-    └── unit/
-        ├── __init__.py [Initializes the unit testing subpackage within tests.]
-        └── route/
-            ├── __init__.py [Initializes the route testing module for unit tests.]
-            └── test_route.py [Unit tests for route functionalities.]
-└── main.py [The main entry point for the FastAPI application, defining API routes.]
+### Conclusion :bulb:
 
-```
+This package is more than just a tool for development; it's a learning journey for modern software practices, cloud integration, and effective application deployment. Whether you are a beginner looking to understand the intricacies of AWS services and application deployment, or an experienced developer seeking a quick and reliable solution for your AWS-based projects, this package is crafted to meet your needs. Join in exploring the potential of cloud computing with a solid foundation in best practices and cutting-edge technology.
+
+I welcome contributions, feedback, and inquiries to continually improve and update this repository. Let's build and learn together!
 
 
+---
 
+### Helpful Commands
 
+**How to Run Tests** :white_check_mark:
 
+- `cd src`: Change directory to the source code.
 
+- `poetry run python -m pytest .`: Runs tests using pytest within the poetry environment.
 
-## How to run the app on the localhost
+**How to Build Image, Run Container, and Remove All After the Job** :whale:
 
-```zsh
-poetry shell
-cd src
-poetry run python main.py
-```
+- `docker-compose up`: Starts containers as defined in `docker-compose.yml`. Useful for running the application in a local development environment.
 
-in web browser, open `http://localhost:8000/docs`
+- `docker-compose up --build`: Rebuilds the image and starts the containers. Use this when you've made changes to the Dockerfile or other components of the image.
 
-## How to run the app via Docker
-#### How to build image, run container and remove all after the job
+- `docker build -t fastapi-template:dev . --no-cache`: Builds the Docker image with the tag `fastapi-template:dev`, ignoring any cached layers. This ensures a fresh build.
 
-```zsh
-docker-compose up
-```
+- `docker run -p 80:8000 fastapi-template:dev`: Runs the container, mapping port 80 of the host to port 8000 of the container.
 
-issues:
-```zsh
+- `docker ps`: Lists running containers.
 
-netstat -an | grep 5432
-brew services stop postgresql
+- `docker logs [ID OR NAME]`: Fetches logs of a specific container. Useful for debugging.
 
-or stop process via Activity Monitor
+- `docker run -it --entrypoint /bin/sh fastapi-template:dev`: Runs the container in interactive mode with a shell entrypoint. Good for exploring inside the container.
 
-docker-compose up --build
-```
+- `docker stop [ID OR NAME]`: Stops a running container.
 
-single container (currently invalid, note)
-```zsh
-docker build -t fastapi-template:dev . --no-cache
-docker run -p 80:8000 fastapi-template:dev
-docker ps
-docker logs [ID OR NAME]
-docker run -it --entrypoint /bin/sh fastapi-template:dev
-```
+- `docker rm [ID OR NAME]`: Removes a stopped container.
 
-in the web browser, run `localhost`
+- `docker images`: Lists all Docker images.
 
-```zsh
-docker stop [ID OR NAME]
-docker rm [ID OR NAME]
-docker images
-docker rmi fastapi-template:dev
-docker rmi -f $(docker images -q)
+- `docker rmi fastapi-template:dev`: Removes the specified image.
 
-sudo docker stop $(sudo docker ps -aq)
-sudo docker rm $(sudo docker ps -aq)
-sudo docker system prune -a
-```
+- `docker rmi -f $(docker images -q)`: Force removes all images.
 
-## How to run tests
-```zsh
-cd src
-poetry run python -m pytest .
-```
+- `sudo docker stop $(sudo docker ps -aq)`: Stops all running containers.
 
-## Cloud infrastructure diagram (x86_64 EC2)
-![Cloud infrastructure diagram](cloudschema.drawio.png "Cloud infrastructure diagram")
+- `sudo docker rm $(sudo docker ps -aq)`: Removes all containers.
 
-After executing the terraform script, validate via EC2 console using (for example):
-```zsh
-sudo aws s3 ls s3://ozieblomichal-fastapi-template-bucket
-sudo docker logs container_name
-sudo docker exec -it container_name bin/sh
-LATEST_LOG=$(sudo aws s3 ls s3://ozieblomichal-fastapi-template-bucket/logs/ --recursive | sort | tail -n 1 | awk '{print substr($0, index($0, $4))}')
-echo $LATEST_LOG
-sudo aws s3 cp "s3://ozieblomichal-fastapi-template-bucket/${LATEST_LOG}" - | cat
-/var/log/syslog
-/var/log/awslogs.log
-sudo find / -type f -name "awslogs-agent-setup.py"
-sudo systemctl status awslogsd
-crontab -l
-cat /var/log/cloud-init-output.log
-grep "crontab" /var/log/cloud-init-output.log
-grep "log_group_name" /var/log/awslogs.log
-```
+- `sudo docker system prune -a`: Removes all stopped containers, networks, images (both dangling and unreferenced), and optionally, volumes.
+
+**Potential local Postgres client issues:** :elephant:
+
+- `netstat -an | grep 5432`: Checks if the PostgreSQL port is already in use.
+
+- `brew services stop postgresql`: Stops the PostgreSQL service if it's running locally, freeing up the port.
+
+- Or stop the process via Activity Monitor.
+
+**After Executing the Terraform Script** :mag:
+
+- `sudo aws s3 ls s3://ozieblomichal-fastapi-template-bucket`: Lists objects in the specified S3 bucket.
+
+- `sudo docker logs container_name`: Fetches logs from a specific container.
+
+- `sudo docker exec -it container_name bin/sh`: Executes an interactive shell inside the container.
+
+- `LATEST_LOG=$(sudo aws s3 ls s3://ozieblomichal-fastapi-template-bucket/logs/ --recursive | sort | tail -n 1 | awk '{print substr($0, index($0, $4))}')`: Fetches the latest log file name from the S3 bucket.
+
+- `echo $LATEST_LOG`: Displays the latest log file name.
+
+- `sudo aws s3 cp "s3://ozieblomichal-fastapi-template-bucket/${LATEST_LOG}" - | cat`: Copies the latest log file from S3 and displays its content.
+
+- `/var/log/syslog`, `/var/log/awslogs.log`: View system logs and AWS logs, respectively.
+
+- `sudo find / -type f -name "awslogs-agent-setup.py"`: Finds the location of the AWS logs agent setup script.
+
+- `sudo systemctl status awslogsd`: Checks the status of the AWS logs daemon.
+
+- `crontab -l`: Lists all cron jobs.
+
+- `cat /var/log/cloud-init-output.log`: Views the output log of cloud initialization.
+
+- `grep "crontab" /var/log/cloud-init-output.log`, `grep "log_group_name" /var/log/awslogs.log`: Searches for specific terms in logs for troubleshooting.
