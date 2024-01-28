@@ -10,6 +10,10 @@ import service.services as service
 from sqlalchemy.orm import Session
 from db.dependencies import get_db
 
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 router = APIRouter()
 
 
@@ -31,11 +35,6 @@ async def read_own_items(current_user: User = Depends(auth.get_current_active_us
     return [{"item_id": "Foo", "owner": current_user.username}]
 
 
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
 def hash_password(password: str) -> str:
     if password is None:
         raise ValueError("Password cannot be None")
@@ -44,7 +43,6 @@ def hash_password(password: str) -> str:
 
 @router.post("/users/", response_model=UserResponse)
 def create_user(user: User, db: Session = Depends(get_db)):
-
     db_user = auth.get_user(db=db, username=user.username)
 
     if db_user:

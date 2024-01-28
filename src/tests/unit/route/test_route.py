@@ -6,10 +6,6 @@ from fastapi.testclient import TestClient
 
 import main
 
-# Adding the directory containing the 'src' folder to sys.path.
-# This allows modules within 'src' to be easily imported throughout the tests.
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-
 
 from model.models import Dummy, Base
 
@@ -21,6 +17,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from sqlalchemy.pool import StaticPool
+
+# Adding the directory containing the 'src' folder to sys.path.
+# This allows modules within 'src' to be easily imported throughout the tests.
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 
 client = TestClient(main.app)
 
@@ -55,10 +55,12 @@ def test_read_dummy(test_db):
     """
     Test the '/dummy' GET endpoint.
 
-    This test checks if the '/dummy' endpoint responds with a status code of 200, indicating a successful response.
+    This test checks if the '/dummy' endpoint responds with a status code of 200, indicating
+    a successful response.
 
     Args:
-        client (TestClient): The FastAPI TestClient instance used to make HTTP requests to the application.
+        client (TestClient): The FastAPI TestClient instance used to make HTTP requests to
+                             the application.
     """
 
     response = client.get("/dummy")

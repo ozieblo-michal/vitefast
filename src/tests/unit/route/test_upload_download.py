@@ -4,6 +4,19 @@ from fastapi.testclient import TestClient
 
 import main
 
+import httpx
+import pytest
+
+
+import docker
+
+import boto3
+
+from moto import mock_s3
+
+
+from moto import mock_ec2
+
 client = TestClient(main.app)
 
 test_file_name = "test_file.txt"
@@ -48,9 +61,6 @@ def test_download_file():
         remove_test_file()
 
 
-import httpx
-import pytest
-
 app = main.app
 
 
@@ -86,8 +96,6 @@ async def test_upload_file_size():
         )
         assert response.status_code == 413
 
-
-import docker
 
 # import time
 
@@ -160,14 +168,6 @@ def test_upload_to_s3_localstack(test_app_localstack, s3_client):
     filenames = [obj["Key"] for obj in objects_in_bucket.get("Contents", [])]
 
     assert "folder/testfile.txt" in filenames
-
-
-import boto3
-
-from moto import mock_s3
-
-
-from moto import mock_ec2
 
 
 @mock_ec2

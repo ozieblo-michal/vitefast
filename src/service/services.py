@@ -5,12 +5,12 @@ import model.models as models
 import schema.schemas as schemas
 
 
+from sqlalchemy.exc import NoResultFound
+
+
 import logging
 
 logger = logging.getLogger("configure_logger")
-
-
-from sqlalchemy.exc import NoResultFound
 
 
 def get_all(db: Session):

@@ -3,12 +3,11 @@ from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 import auth.utils as utils
 
 # from db.fake_db import db
-from schema.schemas import TokenData, User, UserInDB, UserResponse
+from schema.schemas import TokenData, User, UserResponse
 
 
 import model.models as models

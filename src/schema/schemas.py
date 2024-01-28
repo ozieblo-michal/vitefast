@@ -10,9 +10,12 @@ class Dummy(BaseModel):
     This model is used for validating data related to Dummy objects in both requests and responses.
 
     Attributes:
-        name (str): The name of the Dummy object, required, with a length constraint of 1-100 characters.
-        description (str): A brief description of the Dummy object, required, with a length constraint of 1-100 characters.
-        optional_field (Optional[str]): An optional field for additional information, can be either a string or None.
+        name (str): The name of the Dummy object, required, with a length constraint of 1-100
+                    characters.
+        description (str): A brief description of the Dummy object, required, with a length
+                           constraint of 1-100 characters.
+        optional_field (Optional[str]): An optional field for additional information, can be either
+                                        a string or None.
     """
 
     # The `id` field of type UUID is commented out to avoid conflict with the SQLAlchemy model.
@@ -30,8 +33,10 @@ class DummyPatch(BaseModel):
 
     Attributes:
         name (Optional[str]): An optional field to update the name of the Dummy object.
-        description (Optional[str]): An optional field to update the description of the Dummy object.
-        optional_field (Optional[str]): An optional field for additional information that can be updated.
+        description (Optional[str]): An optional field to update the description of the Dummy
+                                     object.
+        optional_field (Optional[str]): An optional field for additional information that can be
+                                        updated.
     """
 
     name: Optional[str] = Field(None, min_length=1, max_length=100)
@@ -61,7 +66,8 @@ class TokenData(BaseModel):
     Contains the information stored in the JWT token payload.
 
     Attributes:
-        username (Optional[str]): The username contained in the token payload. It's optional and defaults to None.
+        username (Optional[str]): The username contained in the token payload. It's optional
+                                  and defaults to None.
     """
 
     username: str | None = None
@@ -92,7 +98,8 @@ class UserResponse(BaseModel):
     """
     Pydantic model for user information used in API responses.
 
-    This model is specifically used for returning user data in API responses, excluding sensitive information like passwords.
+    This model is specifically used for returning user data in API responses, excluding sensitive
+    information like passwords.
 
     Attributes:
         username (str): The unique username of the user.
@@ -111,7 +118,8 @@ class UserInDB(User):
     """
     Pydantic model for user information as stored in the database.
 
-    Extends the User model with additional details specific to the database storage, like hashed passwords.
+    Extends the User model with additional details specific to the database storage, like hashed
+    passwords.
 
     Attributes:
         hashed_password (Optional[str]): The hashed password of the user.
@@ -124,7 +132,8 @@ class DisableUserRequest(BaseModel):
     """
     Pydantic model for disabling a user account.
 
-    Used when a request is made to disable a user account, requiring the user's password for verification.
+    Used when a request is made to disable a user account, requiring the user's password for
+    verification.
 
     Attributes:
         password (str): The password of the user, required for disabling the account.
