@@ -29,12 +29,27 @@ resource "aws_internet_gateway" "my_gateway" {
 resource "aws_subnet" "my_public_subnet" {
   vpc_id     = aws_vpc.my_vpc.id
   cidr_block = "10.0.1.0/24"
+  availability_zone = "eu-west-1a"
   map_public_ip_on_launch = true  
   
   tags = {
     Name = "my-public-subnet"
   }
 }
+
+
+resource "aws_subnet" "my_secondary_subnet" {
+  vpc_id     = aws_vpc.my_vpc.id
+  cidr_block = "10.0.2.0/24"
+  availability_zone = "eu-west-1b"
+  map_public_ip_on_launch = true  
+
+  tags = {
+    Name = "my-secondary-subnet"
+  }
+}
+
+
 
 resource "aws_route_table" "my_routing_table" {
   vpc_id = aws_vpc.my_vpc.id
@@ -263,12 +278,12 @@ resource "aws_db_instance" "my_postgres_db" {
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"
-  engine_version       = "13.4"
+  engine_version       = "15.4"
   instance_class       = "db.t3.micro"
-  name                 = "mydatabase"
+  identifier           = "mydatabase"
+  db_name              = "mydatabase"
   username             = "postgres"
   password             = "mocnehaslo123"
-  parameter_group_name = "default.postgres13"
   skip_final_snapshot  = true
 
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
@@ -282,12 +297,17 @@ resource "aws_db_instance" "my_postgres_db" {
 
 resource "aws_db_subnet_group" "my_db_subnet_group" {
   name       = "my-db-subnet-group"
-  subnet_ids = [aws_subnet.my_public_subnet.id]
+  subnet_ids = [aws_subnet.my_public_subnet.id, aws_subnet.my_secondary_subnet.id]
 
   tags = {
     Name = "MyDBSubnetGroup"
   }
 }
+
+output "db_endpoint" {
+  value = aws_db_instance.my_postgres_db.endpoint
+}
+
 
 resource "aws_instance" "my_ec2_instance" {
   ami           = "ami-0905a3c97561e0b69"  
@@ -305,15 +325,15 @@ resource "aws_instance" "my_ec2_instance" {
               #!/bin/bash
               apt-get update -y
               apt-get install -y docker.io
-              docker pull ozieblomichal/fastapi-template:s3
+              docker pull --pull always ozieblomichal/fastapi-template:latest
               mkdir /home/ubuntu/myapp-logs
               
               mkdir -p /var/awslogs/etc
 
-              docker run -d -p 80:80 -e S3_BUCKET_NAME=${aws_s3_bucket.my_bucket.bucket} \
+              docker run -d -p 80:80 -e DATABASE_URL="postgresql://postgres:mocnehaslo123@${aws_db_instance.my_postgres_db.endpoint}/mydatabase" -e S3_BUCKET_NAME=${aws_s3_bucket.my_bucket.bucket} \
               -v /home/ubuntu/myapp-logs:/logs \
               -v /home/ubuntu/uploads:/uploads \
-              ozieblomichal/fastapi-template:s3
+              ozieblomichal/fastapi-template:latest
               
               apt-get install -y awscli
               
@@ -367,6 +387,103 @@ resource "aws_instance" "my_ec2_instance" {
               service awslogs start
 
               EOF
+
+  # user_data = <<-EOF
+  #             #!/bin/bash
+  #             apt-get update -y
+  #             apt-get install -y docker.io
+
+  #             curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  #             chmod +x /usr/local/bin/docker-compose
+              
+  #             mkdir -p /var/awslogs/etc
+
+  #             cat <<'COMPOSE' > /home/ubuntu/docker-compose.yml
+  #             version: '3.8'
+
+  #             services:
+  #               app:
+  #                 image: ozieblomichal/fastapi-template:dev
+  #                 depends_on:
+  #                   - db
+  #                 ports:
+  #                   - "80:80"
+  #                 environment:
+  #                   DATABASE_URL: postgresql://postgres:password@db:5432/mydatabase
+  #                   RUNNING_IN_CONTAINER: "yes"
+  #                   S3_BUCKET_NAME: ${aws_s3_bucket.my_bucket.bucket}
+  #                 volumes:
+  #                   - /home/ubuntu/myapp-logs:/logs
+  #                   - /home/ubuntu/uploads:/uploads
+
+  #               db:
+  #                 image: postgres:16.1-alpine3.19
+  #                 environment:
+  #                   POSTGRES_DB: mydatabase
+  #                   POSTGRES_USER: postgres
+  #                   POSTGRES_PASSWORD: password
+  #                 ports:
+  #                   - "5432:5432"
+  #                 volumes:
+  #                   - postgres_data:/var/lib/postgresql/data
+
+  #             volumes:
+  #               postgres_data:
+  #             COMPOSE
+
+  #             cd /home/ubuntu
+  #             docker-compose up -d
+
+  #             apt-get install -y awscli
+              
+  #             cat <<'SCRIPT' >/home/ubuntu/upload_logs_to_s3.sh
+  #             #!/bin/bash
+  #             BUCKET_NAME="${aws_s3_bucket.my_bucket.bucket}"
+  #             LOG_DIRECTORY="/home/ubuntu/myapp-logs"
+
+  #             LOG_FILE="/home/ubuntu/myapp-logs/$(date -d "+1 hour" +'%Y-%m-%d %H'):00-$(date -d "$(date +'%Y-%m-%d %H') + 2 hours" +'%H'):00.log"
+
+  #             S3_KEY="logs/$(date -d "+1 hour" +'%Y-%m-%d %H'):00-$(date -d "$(date +'%Y-%m-%d %H') + 2 hours" +'%H'):00.log"
+
+  #             if [ -f "$LOG_FILE" ]; then
+  #                 aws s3 cp "$LOG_FILE" "s3://$BUCKET_NAME/$S3_KEY"
+  #             fi
+  #             SCRIPT
+
+  #             chmod +x /home/ubuntu/upload_logs_to_s3.sh
+ 
+  #             add-apt-repository ppa:deadsnakes/ppa
+  #             apt-get update -y
+  #             apt-get install -y python2.7
+
+  #             cd /home/ubuntu/ && curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
+
+  #             chmod +x ./awslogs-agent-setup.py
+              
+  #             cat > /tmp/awslogs.conf <<- EOM
+
+  #             [general]
+  #             state_file = /var/awslogs/state/agent-state
+
+  #             [myapp_logs]
+  #             file = /home/ubuntu/myapp-logs/*.log
+  #             log_group_name = myapp-log-group
+  #             log_stream_name = {instance_id}-{file_name}
+  #             datetime_format = %Y-%m-%d %H:%M:%S
+
+  #             EOM
+
+  #             python2.7 ./awslogs-agent-setup.py -n -r ${var.region} -c /tmp/awslogs.conf
+
+  #             sleep 180 
+
+  #             service cron start
+  #             echo "*/1 * * * * /home/ubuntu/upload_logs_to_s3.sh" > /home/ubuntu/crontab_file
+  #             crontab /home/ubuntu/crontab_file
+
+  #             service awslogs start
+
+  #             EOF
 
   tags = {
     Name = "my-ec2-instance"

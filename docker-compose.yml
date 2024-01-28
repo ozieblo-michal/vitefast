@@ -2,14 +2,18 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    image: ozieblomichal/fastapi-template:latest
     depends_on:
       - db
     ports:
       - "80:80"
     environment:
       DATABASE_URL: postgresql://postgres:password@db:5432/mydatabase
-      RUNNING_IN_CONTAINER: "yes"
+    #   RUNNING_IN_CONTAINER: "yes"
+    #   S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+    # volumes:
+    #   - /home/ubuntu/myapp-logs:/logs
+    #   - /home/ubuntu/uploads:/uploads
 
   db:
     image: postgres:16.1-alpine3.19
