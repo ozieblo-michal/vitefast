@@ -5,8 +5,9 @@ import model.models as models
 
 if os.getenv("RUNNING_IN_CONTAINER") == "yes":
     SQLALCHEMY_DATABASE_URL = os.getenv(
-        "DATABASE_URL",
-        "sqlite:///./demodb.db"
+        "DATABASE_URL"
+        # ,
+        # "sqlite:///./demodb.db"
         # "postgresql://postgres:password@db:5432/mydatabase"
     )
 

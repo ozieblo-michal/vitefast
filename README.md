@@ -62,6 +62,24 @@ This package is more than just a tool for development; it's a learning journey f
 
 I welcome contributions, feedback, and inquiries to continually improve and update this repository. Let's build and learn together!
 
+### Running the package
+
+To run the package, you have two options depending on your preference:
+
+1. **AWS Deployment:** 
+   - First, log in to your AWS account using the AWS Command Line Interface (CLI).
+   - Install Terraform on your machine.
+   - Navigate to the directory containing the `main.tf` Terraform configuration file.
+   - Execute `terraform plan` to review the planned infrastructure changes.
+   - Apply these changes by running `terraform apply`.
+   - After you're done, and if you wish to tear down the infrastructure, use `terraform destroy`.
+
+2. **Local Deployment:**
+   - Ensure you have Docker and Docker Compose installed on your local machine.
+   - Run `docker compose up` from the directory containing your `docker-compose.yml` file. 
+   - This will start the application locally using Docker.
+
+
 
 ---
 
@@ -79,15 +97,15 @@ I welcome contributions, feedback, and inquiries to continually improve and upda
 
 - `docker-compose up --build`: Rebuilds the image and starts the containers. Use this when you've made changes to the Dockerfile or other components of the image.
 
-- `docker build -t fastapi-template:dev . --no-cache`: Builds the Docker image with the tag `fastapi-template:dev`, ignoring any cached layers. This ensures a fresh build.
+- `docker build -t [NAME:TAG] . --no-cache`: Builds the Docker image with the tag, ignoring any cached layers. This ensures a fresh build.
 
-- `docker run -p 80:8000 fastapi-template:dev`: Runs the container, mapping port 80 of the host to port 8000 of the container.
+- `docker run -p 80:8000 [ID OR NAME]`: Runs the container, mapping port 80 of the host to port 8000 of the container.
 
 - `docker ps`: Lists running containers.
 
 - `docker logs [ID OR NAME]`: Fetches logs of a specific container. Useful for debugging.
 
-- `docker run -it --entrypoint /bin/sh fastapi-template:dev`: Runs the container in interactive mode with a shell entrypoint. Good for exploring inside the container.
+- `docker run -it --entrypoint /bin/sh [ID OR NAME]`: Runs the container in interactive mode with a shell entrypoint. Good for exploring inside the container.
 
 - `docker stop [ID OR NAME]`: Stops a running container.
 
@@ -95,7 +113,7 @@ I welcome contributions, feedback, and inquiries to continually improve and upda
 
 - `docker images`: Lists all Docker images.
 
-- `docker rmi fastapi-template:dev`: Removes the specified image.
+- `docker rmi [ID OR NAME]`: Removes the specified image.
 
 - `docker rmi -f $(docker images -q)`: Force removes all images.
 
