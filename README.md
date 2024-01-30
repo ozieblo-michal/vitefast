@@ -88,7 +88,7 @@ To run the package, you have two options depending on your preference:
    - Run `docker compose up` from the main directory containing your `docker-compose.yml` file. 
    - This will start the application locally using Docker.
 
-### How to Run Tests** :white_check_mark:
+### How to Run Tests :white_check_mark:
 
 - `cd src`: Change directory to the source code.
 
