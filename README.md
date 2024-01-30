@@ -7,26 +7,23 @@
 ![Pylint](https://img.shields.io/badge/linter-pylint-blue.svg)
 
 
-# FastAPI application installer :rocket:
-
-### Cloud infrastructure diagram (x86_64 EC2)
-![Cloud infrastructure diagram](cloudschema.drawio.png "Cloud infrastructure diagram")
+# FastAPI engine :rocket:
 
 ### Introduction :wave:
 
-This repository embodies a unique package that serves several critical objectives with a focus on educational value, ease of deployment, customization, and adherence to best coding and architectural practices as of January 2024. The primary goal is to provide a comprehensive learning experience, guiding users through the rationale behind each implementation, understanding the 'why' and 'how', rather than just the 'what'.
-
-### Educational Value :school:
-
-**Thorough Documentation:** It is committed to meticulously document every aspect of the package. The documentation emphasizes the purpose and reasoning behind each feature and implementation. This approach aims to enhance the learning experience for users, providing them with a deeper understanding of the underlying concepts and choices made during development.
+This repository is primarily a **ready-to-use engine (template) for the backend of web applications, designed for the effortless deployment**. It is crafted to facilitate rapid and easy customization, catering to diverse needs and preferences. It represents a distinctive package aimed at achieving several secondary objectives, with an emphasis on educational value. **Documentation focuses on understanding the 'why' and 'how' of the processes, not just the 'what', making it easier to understand the logic behind.** The package ensures adherence to the best coding and architectural practices as of January 2024.
 
 ### Streamlined AWS Integration :cloud:
 
 **One-Line Deployment:** The package is designed for seamless integration with AWS services, enabling users to launch a basic application with just a single line of command in the terminal, assuming pre-configured AWS host connection settings. This feature significantly simplifies the process of deploying and managing applications on the cloud.
 
+### Educational Value :school:
+
+**Thorough Documentation:** It is committed to meticulously document every aspect of the package. The documentation emphasizes the purpose and reasoning behind each feature and implementation. This approach aims to enhance the learning experience for users, providing them with a deeper understanding of the underlying concepts and choices made during development.
+
 ### Customization and Flexibility :wrench:
 
-**Rapid Adaptation:** Acknowledging the diverse needs of different projects, the package is engineered to allow quick and straightforward adjustments. Users can easily tailor the package to meet specific requirements within a basic scope, providing both flexibility and efficiency in development.
+**Quick Adaptation:** Acknowledging the diverse needs of different projects, the package is engineered to allow quick and straightforward adjustments. Users can easily tailor the package to meet specific requirements within a basic scope, providing both flexibility and efficiency in development.
 
 ### Technology and Best Practices :star:
 
@@ -56,103 +53,49 @@ FastAPI is a modern, fast (high-performance) web framework for building APIs wit
 ### Advantages of Using Alpine Images for Ubuntu and Postgres :mount_fuji:
 The use of Alpine Linux images for our Ubuntu and Postgres containers provides substantial benefits, particularly in terms of efficiency and security. Alpine Linux is renowned for its minimalistic size, which results in significantly lighter and faster containers. This not only reduces the time taken for image downloads and deployments but also lessens the resource consumption, making it ideal for environments with limited resources. Furthermore, Alpine's minimalistic nature means fewer components are susceptible to vulnerabilities, enhancing the overall security of the containers. This makes Alpine an excellent choice for streamlined, secure, and efficient containerized applications.
 
-### Conclusion :bulb:
+### AWS RDS Postgres vs. Containerized Postgres :grey_question:
 
-This package is more than just a tool for development; it's a learning journey for modern software practices, cloud integration, and effective application deployment. Whether you are a beginner looking to understand the intricacies of AWS services and application deployment, or an experienced developer seeking a quick and reliable solution for your AWS-based projects, this package is crafted to meet your needs. Join in exploring the potential of cloud computing with a solid foundation in best practices and cutting-edge technology.
+**AWS RDS Postgres**
+- Advantages: Managed service (simplifies administration), high availability, scalable, secure, integrated monitoring.
+- Disadvantages: May lack the latest Postgres version, higher cost, less control, potential vendor lock-in.
 
-I welcome contributions, feedback, and inquiries to continually improve and update this repository. Let's build and learn together!
+**Containerized Postgres**
+- Advantages: Access to the latest Postgres versions, more control over configuration, cost-effective, portable across environments.
+- Disadvantages: Increased management overhead, complex high availability setup, additional security responsibilities, resource-intensive management.
 
-### Running the package
+The choice between AWS RDS and a containerized Postgres hinges on needs for the latest Postgres features, budget, control level, and scalability.
+
+### Running the package :runner:
 
 To run the package, you have two options depending on your preference:
+
+### Cloud infrastructure diagram - variant with RDS (x86_64 EC2)
+![Cloud infrastructure diagram](/img/RDSschema.png "Cloud infrastructure diagram - variant with RDS")
+
+### Cloud infrastructure diagram - variant with Postgres as a microservice (x86_64 EC2)
+![Cloud infrastructure diagram](img/dbmicroserviceschema.png "Cloud infrastructure diagram - variant with Postgres as a microservice")
 
 1. **AWS Deployment:** 
    - First, log in to your AWS account using the AWS Command Line Interface (CLI).
    - Install Terraform on your machine.
-   - Navigate to the directory containing the `main.tf` Terraform configuration file.
+   - Navigate to the `terraform` directory containing the `main.tf` Terraform configuration file. Choose a version using a Postgres database on AWS RDS or available as a microservice in EC2 with the application.
    - Execute `terraform plan` to review the planned infrastructure changes.
    - Apply these changes by running `terraform apply`.
    - After you're done, and if you wish to tear down the infrastructure, use `terraform destroy`.
 
 2. **Local Deployment:**
    - Ensure you have Docker and Docker Compose installed on your local machine.
-   - Run `docker compose up` from the directory containing your `docker-compose.yml` file. 
+   - Run `docker compose up` from the main directory containing your `docker-compose.yml` file. 
    - This will start the application locally using Docker.
 
-
-
----
-
-### Helpful Commands
-
-**How to Run Tests** :white_check_mark:
+### How to Run Tests** :white_check_mark:
 
 - `cd src`: Change directory to the source code.
 
-- `poetry run python -m pytest .`: Runs tests using pytest within the poetry environment.
+- `poetry run python -m pytest .` : Runs tests using pytest within the poetry environment.
 
-**How to Build Image, Run Container, and Remove All After the Job** :whale:
+### Conclusion :bulb:
 
-- `docker-compose up`: Starts containers as defined in `docker-compose.yml`. Useful for running the application in a local development environment.
+This package is more than just an engine; it's a learning journey for modern software practices, cloud integration, and effective application deployment. Whether you are a beginner looking to understand the intricacies of AWS services and application deployment, or an experienced developer seeking a quick and reliable solution for your AWS-based projects, this package is crafted to meet your needs. Join in exploring the potential of cloud computing with a solid foundation in best practices and cutting-edge technology.
 
-- `docker-compose up --build`: Rebuilds the image and starts the containers. Use this when you've made changes to the Dockerfile or other components of the image.
-
-- `docker build -t [NAME:TAG] . --no-cache`: Builds the Docker image with the tag, ignoring any cached layers. This ensures a fresh build.
-
-- `docker run -p 80:8000 [ID OR NAME]`: Runs the container, mapping port 80 of the host to port 8000 of the container.
-
-- `docker ps`: Lists running containers.
-
-- `docker logs [ID OR NAME]`: Fetches logs of a specific container. Useful for debugging.
-
-- `docker run -it --entrypoint /bin/sh [ID OR NAME]`: Runs the container in interactive mode with a shell entrypoint. Good for exploring inside the container.
-
-- `docker stop [ID OR NAME]`: Stops a running container.
-
-- `docker rm [ID OR NAME]`: Removes a stopped container.
-
-- `docker images`: Lists all Docker images.
-
-- `docker rmi [ID OR NAME]`: Removes the specified image.
-
-- `docker rmi -f $(docker images -q)`: Force removes all images.
-
-- `sudo docker stop $(sudo docker ps -aq)`: Stops all running containers.
-
-- `sudo docker rm $(sudo docker ps -aq)`: Removes all containers.
-
-- `sudo docker system prune -a`: Removes all stopped containers, networks, images (both dangling and unreferenced), and optionally, volumes.
-
-**Potential local Postgres client issues:** :elephant:
-
-- `netstat -an | grep 5432`: Checks if the PostgreSQL port is already in use.
-
-- `brew services stop postgresql`: Stops the PostgreSQL service if it's running locally, freeing up the port.
-
-- Or stop the process via Activity Monitor.
-
-**After Executing the Terraform Script** :mag:
-
-- `sudo aws s3 ls s3://ozieblomichal-fastapi-template-bucket`: Lists objects in the specified S3 bucket.
-
-- `sudo docker logs container_name`: Fetches logs from a specific container.
-
-- `sudo docker exec -it container_name bin/sh`: Executes an interactive shell inside the container.
-
-- `LATEST_LOG=$(sudo aws s3 ls s3://ozieblomichal-fastapi-template-bucket/logs/ --recursive | sort | tail -n 1 | awk '{print substr($0, index($0, $4))}')`: Fetches the latest log file name from the S3 bucket.
-
-- `echo $LATEST_LOG`: Displays the latest log file name.
-
-- `sudo aws s3 cp "s3://ozieblomichal-fastapi-template-bucket/${LATEST_LOG}" - | cat`: Copies the latest log file from S3 and displays its content.
-
-- `/var/log/syslog`, `/var/log/awslogs.log`: View system logs and AWS logs, respectively.
-
-- `sudo find / -type f -name "awslogs-agent-setup.py"`: Finds the location of the AWS logs agent setup script.
-
-- `sudo systemctl status awslogsd`: Checks the status of the AWS logs daemon.
-
-- `crontab -l`: Lists all cron jobs.
-
-- `cat /var/log/cloud-init-output.log`: Views the output log of cloud initialization.
-
-- `grep "crontab" /var/log/cloud-init-output.log`, `grep "log_group_name" /var/log/awslogs.log`: Searches for specific terms in logs for troubleshooting.
+I welcome contributions, feedback, and inquiries to continually improve and update this repository. Let's build and learn together!

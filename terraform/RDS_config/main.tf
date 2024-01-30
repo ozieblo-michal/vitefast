@@ -1,3 +1,13 @@
+terraform {
+  required_version = "1.6.6"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 3.0"
+    }
+  }
+}
+
 provider "aws" {
   region = "eu-west-1"
 }
@@ -5,6 +15,7 @@ provider "aws" {
 variable "region" {
   description = "The AWS region"
   default     = "eu-west-1"
+  type = string
 }
 
 
@@ -27,11 +38,11 @@ resource "aws_internet_gateway" "my_gateway" {
 }
 
 resource "aws_subnet" "my_public_subnet" {
-  vpc_id     = aws_vpc.my_vpc.id
-  cidr_block = "10.0.1.0/24"
-  availability_zone = "eu-west-1a"
-  map_public_ip_on_launch = true  
-  
+  vpc_id                  = aws_vpc.my_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "eu-west-1a"
+  map_public_ip_on_launch = true
+
   tags = {
     Name = "my-public-subnet"
   }
@@ -39,10 +50,10 @@ resource "aws_subnet" "my_public_subnet" {
 
 
 resource "aws_subnet" "my_secondary_subnet" {
-  vpc_id     = aws_vpc.my_vpc.id
-  cidr_block = "10.0.2.0/24"
-  availability_zone = "eu-west-1b"
-  map_public_ip_on_launch = true  
+  vpc_id                  = aws_vpc.my_vpc.id
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = "eu-west-1b"
+  map_public_ip_on_launch = true
 
   tags = {
     Name = "my-secondary-subnet"
@@ -127,15 +138,15 @@ resource "aws_iam_policy" "s3_access_policy" {
           "s3:PutObject",
           "s3:DeleteObject"
         ],
-        Effect   = "Allow",
+        Effect = "Allow",
         Resource = [
           "${aws_s3_bucket.my_bucket.arn}",
           "${aws_s3_bucket.my_bucket.arn}/*"
         ]
       },
       {
-        Action = "s3:ListAllMyBuckets",
-        Effect = "Allow",
+        Action   = "s3:ListAllMyBuckets",
+        Effect   = "Allow",
         Resource = "*"
       }
     ]
@@ -147,11 +158,11 @@ resource "aws_iam_role" "ec2_s3_access_role" {
   name = "EC2S3AccessRole"
 
   assume_role_policy = jsonencode({
-    Version   = "2012-10-17",
+    Version = "2012-10-17",
     Statement = [
       {
-        Action    = "sts:AssumeRole",
-        Effect    = "Allow",
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
         Principal = {
           Service = "ec2.amazonaws.com"
         }
@@ -163,7 +174,7 @@ resource "aws_iam_role" "ec2_s3_access_role" {
 
 
 resource "aws_s3_bucket" "my_bucket" {
-  bucket = "ozieblomichal-fastapi-template-bucket" 
+  bucket = "ozieblomichal-fastapi-template-bucket"
 
   tags = {
     Name = "MojBucket"
@@ -182,7 +193,7 @@ resource "aws_iam_role_policy_attachment" "s3_access_policy_attachment" {
   role       = aws_iam_role.ec2_s3_access_role.name
   policy_arn = aws_iam_policy.s3_access_policy.arn
 
-  
+
 }
 
 
@@ -200,11 +211,11 @@ resource "aws_iam_role" "ec2_cloudwatch_log_role" {
   name = "EC2CloudWatchLogRole"
 
   assume_role_policy = jsonencode({
-    Version   = "2012-10-17",
+    Version = "2012-10-17",
     Statement = [
       {
-        Action    = "sts:AssumeRole",
-        Effect    = "Allow",
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
         Principal = {
           Service = "ec2.amazonaws.com"
         }
@@ -227,7 +238,7 @@ resource "aws_iam_policy" "ec2_cloudwatch_log_policy" {
           "logs:DescribeLogStreams",
           "logs:CreateLogGroup"
         ],
-        Effect = "Allow",
+        Effect   = "Allow",
         Resource = "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/ec2/my-log-group:*"
       }
     ]
@@ -275,16 +286,16 @@ resource "aws_iam_role_policy_attachment" "ec2_cloudwatch_logs_policy_attachment
 
 
 resource "aws_db_instance" "my_postgres_db" {
-  allocated_storage    = 20
-  storage_type         = "gp2"
-  engine               = "postgres"
-  engine_version       = "15.4"
-  instance_class       = "db.t3.micro"
-  identifier           = "mydatabase"
-  db_name              = "mydatabase"
-  username             = "postgres"
-  password             = "mocnehaslo123"
-  skip_final_snapshot  = true
+  allocated_storage   = 20
+  storage_type        = "gp2"
+  engine              = "postgres"
+  engine_version      = "15.4"
+  instance_class      = "db.t3.micro"
+  identifier          = "mydatabase"
+  db_name             = "mydatabase"
+  username            = "postgres"
+  password            = "mocnehaslo123"
+  skip_final_snapshot = true
 
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
 
@@ -310,9 +321,9 @@ output "db_endpoint" {
 
 
 resource "aws_instance" "my_ec2_instance" {
-  ami           = "ami-0905a3c97561e0b69"  
-  instance_type = "t2.micro"
-  subnet_id     = aws_subnet.my_public_subnet.id
+  ami                         = "ami-0905a3c97561e0b69"
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.my_public_subnet.id
   associate_public_ip_address = true
 
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
@@ -395,7 +406,7 @@ resource "aws_instance" "my_ec2_instance" {
 
   #             curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
   #             chmod +x /usr/local/bin/docker-compose
-              
+
   #             mkdir -p /var/awslogs/etc
 
   #             cat <<'COMPOSE' > /home/ubuntu/docker-compose.yml
@@ -435,7 +446,7 @@ resource "aws_instance" "my_ec2_instance" {
   #             docker-compose up -d
 
   #             apt-get install -y awscli
-              
+
   #             cat <<'SCRIPT' >/home/ubuntu/upload_logs_to_s3.sh
   #             #!/bin/bash
   #             BUCKET_NAME="${aws_s3_bucket.my_bucket.bucket}"
@@ -451,7 +462,7 @@ resource "aws_instance" "my_ec2_instance" {
   #             SCRIPT
 
   #             chmod +x /home/ubuntu/upload_logs_to_s3.sh
- 
+
   #             add-apt-repository ppa:deadsnakes/ppa
   #             apt-get update -y
   #             apt-get install -y python2.7
@@ -459,7 +470,7 @@ resource "aws_instance" "my_ec2_instance" {
   #             cd /home/ubuntu/ && curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
 
   #             chmod +x ./awslogs-agent-setup.py
-              
+
   #             cat > /tmp/awslogs.conf <<- EOM
 
   #             [general]
