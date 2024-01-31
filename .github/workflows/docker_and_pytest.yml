@@ -2,9 +2,9 @@ name: Docker and Pytest Workflow
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev2, main ]
   pull_request:
-    branches: [ main ]
+    branches: [ dev2, main ]
 
 jobs:
   build-and-test:
