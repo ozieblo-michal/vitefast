@@ -11,7 +11,7 @@
 
 ### Introduction :wave:
 
-This repository is primarily a **ready-to-use engine (template) for the backend of web applications, designed for the effortless deployment**. It is crafted to facilitate rapid and easy customization, catering to diverse needs and preferences. It represents a distinctive package aimed at achieving several secondary objectives, with an emphasis on educational value. **Documentation focuses on understanding the 'why' and 'how' of the processes, not just the 'what', making it easier to understand the logic behind.** The package ensures adherence to the best coding and architectural practices as of January 2024.
+This repository is a **ready-to-use web applications backend template, designed for  effortless deployment**. It was crafted to ease rapid and easy customization, catering to diverse needs and preferences. **Documentation focuses on 'why' and 'how', not 'what'**. The package follows the best coding and architectural practices as of January 2024.
 
 ### Prerequisites for Working with the Package :school:
 
@@ -46,21 +46,21 @@ To run the package, you have two options depending on your preference:
 
 ### Streamlined AWS Integration :cloud:
 
-**One-Line Deployment:** The package is designed for seamless integration with AWS services, enabling users to launch a basic application with just a single line of command in the terminal, assuming pre-configured AWS host connection settings. This feature significantly simplifies the process of deploying and managing applications on the cloud.
+**One-Line Deployment:** The package was designed for seamless integration with AWS services. It enables to launch a basic application with a single line in the terminal. This feature simplifies the process of deploying and managing applications on the cloud.
 
 ### Educational Value :school:
 
-**Thorough Documentation:** It is committed to meticulously document every aspect of the package. The documentation emphasizes the purpose and reasoning behind each feature and implementation. This approach aims to enhance the learning experience for users, providing them with a deeper understanding of the underlying concepts and choices made during development.
+**Thorough Documentation:** It was committed to document every aspect of the package. The documentation emphasizes the purpose and reasoning behind each feature and implementation.
 
 ### Customization and Flexibility :wrench:
 
-**Quick Adaptation:** Acknowledging the diverse needs of different projects, the package is engineered to allow quick and straightforward adjustments. Users can easily tailor the package to meet specific requirements within a basic scope, providing both flexibility and efficiency in development.
+**Quick Adaptation:** The package was engineered to allow quick and straightforward adjustments. Users may tailor the package to specific requirements, providing development flexibility and efficiency.
 
 ### Technology and Best Practices :star:
 
-**Current Package Versions:** Reflecting the latest advancements as of January 2024, ensuring that all package versions used are up-to-date, offering users the benefits of the latest features, security patches, and optimizations.
+**Current Package Versions:** As of January 2024, all packages are up-to-date, offering latest features, security patches, and optimizations.
 
-**Best Coding and Architectural Practices:** The package is built with a strong emphasis on best practices in coding and architecture. This includes the use of Alpine-based images, known for their lightweight and security-focused design. These practices not only enhance the performance and security of applications but also provide a reference point for users to learn and incorporate these practices into their own development workflows.
+**Best Coding and Architectural Practices:** The package was built with a strong emphasis on best practices in coding and architecture. This includes the use of Alpine-based images, known for their lightweight and security-focused design. These practices enhance the performance and security of applications.
 
 ### Why FastAPI, not Flask :muscle:
 FastAPI is a modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints. The key features are:
@@ -74,7 +74,7 @@ FastAPI is a modern, fast (high-performance) web framework for building APIs wit
 - **Robust**: Get production-ready code. With automatic interactive documentation.
 
 ### Advantages of Using Alpine Images for Ubuntu and Postgres :mount_fuji:
-The use of Alpine Linux images for our Ubuntu and Postgres containers provides substantial benefits, particularly in terms of efficiency and security. Alpine Linux is renowned for its minimalistic size, which results in significantly lighter and faster containers. This not only reduces the time taken for image downloads and deployments but also lessens the resource consumption, making it ideal for environments with limited resources. Furthermore, Alpine's minimalistic nature means fewer components are susceptible to vulnerabilities, enhancing the overall security of the containers. This makes Alpine an excellent choice for streamlined, secure, and efficient containerized applications.
+Alpine was renowned for its minimalistic size, which results in lighter and faster containers. It reduces the download and deployment time, but also lessens the resource consumption. It makes it ideal for environments with limited resources. Alpine's minimalistic nature means also fewer components susceptible to vulnerabilities, enhancing the security of the containers. This makes Alpine an excellent choice for streamlined, secure, and efficient containerized applications.
 
 ### AWS RDS Postgres vs. Containerized Postgres :grey_question:
 
@@ -96,6 +96,6 @@ The choice between AWS RDS and a containerized Postgres hinges on needs for the 
 
 ### Conclusion :bulb:
 
-This package is more than just an engine; it's a learning journey for modern software practices, cloud integration, and effective application deployment. Whether you are a beginner looking to understand the intricacies of AWS services and application deployment, or an experienced developer seeking a quick and reliable solution for your AWS-based projects, this package is crafted to meet your needs. Join in exploring the potential of cloud computing with a solid foundation in best practices and cutting-edge technology.
+This package is more than an engine. Whether you are a beginner looking to understand the intricacies of AWS services and application deployment, or an experienced developer seeking a quick and reliable solution for your AWS-based projects, this package was crafted to meet your needs.
 
 I welcome contributions, feedback, and inquiries to continually improve and update this repository. Let's build and learn together!
