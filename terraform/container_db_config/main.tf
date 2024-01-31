@@ -49,19 +49,6 @@ resource "aws_subnet" "my_public_subnet" {
 }
 
 
-# resource "aws_subnet" "my_secondary_subnet" {
-#   vpc_id     = aws_vpc.my_vpc.id
-#   cidr_block = "10.0.2.0/24"
-#   availability_zone = "eu-west-1b"
-#   map_public_ip_on_launch = true  
-
-#   tags = {
-#     Name = "my-secondary-subnet"
-#   }
-# }
-
-
-
 resource "aws_route_table" "my_routing_table" {
   vpc_id = aws_vpc.my_vpc.id
 
@@ -283,41 +270,6 @@ resource "aws_iam_role_policy_attachment" "ec2_cloudwatch_logs_policy_attachment
   policy_arn = aws_iam_policy.ec2_cloudwatch_logs_policy.arn
 }
 
-
-
-# resource "aws_db_instance" "my_postgres_db" {
-#   allocated_storage    = 20
-#   storage_type         = "gp2"
-#   engine               = "postgres"
-#   engine_version       = "15.4"
-#   instance_class       = "db.t3.micro"
-#   identifier           = "mydatabase"
-#   db_name              = "mydatabase"
-#   username             = "postgres"
-#   password             = "mocnehaslo123"
-#   skip_final_snapshot  = true
-
-#   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
-
-#   db_subnet_group_name = aws_db_subnet_group.my_db_subnet_group.name
-
-#   tags = {
-#     Name = "MojaBazaDanychPostgres"
-#   }
-# }
-
-# resource "aws_db_subnet_group" "my_db_subnet_group" {
-#   name       = "my-db-subnet-group"
-#   subnet_ids = [aws_subnet.my_public_subnet.id, aws_subnet.my_secondary_subnet.id]
-
-#   tags = {
-#     Name = "MyDBSubnetGroup"
-#   }
-# }
-
-# output "db_endpoint" {
-#   value = aws_db_instance.my_postgres_db.endpoint
-# }
 
 
 resource "aws_instance" "my_ec2_instance" {

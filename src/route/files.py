@@ -43,6 +43,7 @@ async def download_file(filename: str):
         return {"error": "File not found"}
 
 
+# TODO: make it visible only to AWS deployments
 @router.post("/uploads3/")
 async def upload_to_s3(file: UploadFile = File(...)):
     allowed_extensions = {"txt", "csv", "jpg", "png", "pdf"}

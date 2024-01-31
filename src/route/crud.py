@@ -57,6 +57,7 @@ def create_dummy(
     return dummy_service.create(dummy, db)
 
 
+# TODO: add unit tests
 @router.put("/{dummy_id}", response_model=Dummy)
 @limiter.limit("5/minute")
 def modify_completely(

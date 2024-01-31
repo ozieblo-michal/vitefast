@@ -30,6 +30,7 @@ async def read_users_me(current_user: User = Depends(auth.get_current_active_use
     return current_user
 
 
+# TODO: add return object type and remove hashed password from it
 @router.get("/users/me/items/")
 async def read_own_items(current_user: User = Depends(auth.get_current_active_user)):
     return [{"item_id": "Foo", "owner": current_user.username}]
