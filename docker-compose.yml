@@ -9,7 +9,6 @@ services:
       - "80:80"
     environment:
       DATABASE_URL: postgresql://postgres:password@db:5432/mydatabase
-      RUNNING_IN_CONTAINER: "yes"
 
   db:
     image: postgres:16.1-alpine3.19

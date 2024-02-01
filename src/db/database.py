@@ -3,13 +3,7 @@ from sqlalchemy.orm import sessionmaker
 import os
 import model.models as models
 
-if os.getenv("RUNNING_IN_CONTAINER") == "yes":
-    SQLALCHEMY_DATABASE_URL = os.getenv(
-        "DATABASE_URL"
-        # ,
-        # "sqlite:///./demodb.db"
-        # "postgresql://postgres:password@db:5432/mydatabase"
-    )
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./demodb.db")
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,

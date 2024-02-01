@@ -306,7 +306,6 @@ resource "aws_instance" "my_ec2_instance" {
                     - "80:80"
                   environment:
                     DATABASE_URL: postgresql://postgres:password@db:5432/mydatabase
-                    RUNNING_IN_CONTAINER: "yes"
                     S3_BUCKET_NAME: ${aws_s3_bucket.my_bucket.bucket}
                   volumes:
                     - /home/ubuntu/myapp-logs:/logs
