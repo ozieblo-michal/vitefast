@@ -3,11 +3,20 @@ from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 import auth.utils as utils
-from db.fake_db import db
-from schema.schemas import TokenData, User, UserInDB
+
+# from db.fake_db import db
+from schema.schemas import TokenData, User, UserResponse
+
+
+import model.models as models
+
+
+from sqlalchemy.orm import Session
+
+
+from db.dependencies import get_db
 
 # openssl rand -hex 32
 SECRET_KEY = "e69df904acecb0f9420801b460fc1f85f774b418df3eb3d18906736d5ecd23ae"
@@ -43,26 +52,18 @@ def verify_password(plain_password, hashed_password):
     return utils.pwd_context.verify(plain_password, hashed_password)
 
 
-# Function to retrieve user data from the database based on the username.
-# Helps in authenticating the user and getting user-related data.
-def get_user(db, username: str):
-    """Retrieve a user from the database by username.
+def get_user(username: str, db: Session = Depends(get_db)) -> User | None:
+    print(f"Database session id: {id(db)}")
 
-    Args:
-        db (dict): The database representation (usually a dictionary).
-        username (str): The username of the user to retrieve.
-
-    Returns:
-        UserInDB or None: The user object if found, None otherwise.
-    """
-    if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
+    db_user = db.query(models.User).filter(models.User.username == username).first()
+    if db_user:
+        return User(**db_user.__dict__)
+    return None
 
 
 # Function to authenticate the user by verifying the username and password.
 # Returns the user object if authentication is successful, otherwise False.
-def authenticate_user(db, username: str, password: str):
+def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
     """Authenticate a user by username and password.
 
     Args:
@@ -73,10 +74,12 @@ def authenticate_user(db, username: str, password: str):
     Returns:
         User or False: The authenticated user object, or False if authentication fails.
     """
-    user = get_user(db, username)
-    if not user or not verify_password(password, user.hashed_password):
+    user = get_user(username, db)
+
+    if not user or not verify_password(password, user.password):
         return False
-    return user
+
+    return UserResponse(**user.__dict__)
 
 
 # Function to create a JWT access token with an optional expiry.
@@ -103,7 +106,9 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 # Dependency function to get the current user from the token.
 # Throws an error if the token is invalid, ensuring secure access to user-specific endpoints.
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(
+    db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
+):
     """Get the current user from the provided token.
 
     Args:
@@ -118,12 +123,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
+
         if username is None:
             raise credentials_exception()
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception()
-    user = get_user(db, username=token_data.username)
+    user = get_user(username=token_data.username, db=db)
     if user is None:
         raise credentials_exception()
     return user
@@ -131,7 +137,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 # Dependency function to get the current active user.
 # Throws an error if the user is disabled, ensuring only active users can access certain endpoints.
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
+async def get_current_active_user(
+    current_user: UserResponse = Depends(get_current_user),
+):
     """Get the current active user.
 
     Args:
@@ -143,14 +151,18 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
     Raises:
         HTTPException: 400 error if the user is inactive.
     """
-    if current_user.disabled:
+
+    user = current_user
+    if user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user
+    return user
 
 
 # Endpoint to handle login and return an access token.
 # Validates user credentials and returns a JWT token for authenticated sessions.
-def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+def login_for_access_token(
+    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
+):
     """Authenticate and return an access token for a valid user.
 
     Args:
@@ -162,7 +174,9 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     Raises:
         HTTPException: 401 error if the user cannot be authenticated.
     """
-    user = authenticate_user(db, form_data.username, form_data.password)
+
+    user = authenticate_user(form_data.username, form_data.password, db)
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

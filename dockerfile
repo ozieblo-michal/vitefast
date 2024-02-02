@@ -45,10 +45,14 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cache
 
+ENV RUNNING_IN_CONTAINER=yes
+
 COPY pyproject.toml poetry.lock ./
 
-RUN poetry install --no-root && rm -rf $POETRY_CACHE_DIR
+RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR 
 
 COPY ./src /src
+
+RUN mkdir /logs
 
 CMD ["poetry", "run", "python", "src/main.py"]

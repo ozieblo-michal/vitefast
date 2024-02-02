@@ -2,9 +2,9 @@ name: Docker and Pytest Workflow
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev2, main ]
   pull_request:
-    branches: [ main ]
+    branches: [ dev2, main ]
 
 jobs:
   build-and-test:
@@ -17,6 +17,6 @@ jobs:
     - name: Build Docker image
       run: docker build -t fastapi-template:amd .
     - name: Run Pytest in /src directory
-      run: docker run --rm fastapi-template:amd /bin/sh -c "cd src && poetry run python -m pytest ."
+      run: docker run --rm fastapi-template:amd /bin/sh -c "cd src && mkdir logs && poetry run python -m pytest ."
 
 

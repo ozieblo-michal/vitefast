@@ -4,48 +4,42 @@ from sqlalchemy.orm import Session
 import model.models as models
 import schema.schemas as schemas
 
-# import logging
-# logger = logging.getLogger("configure_logger")
+
+from sqlalchemy.exc import NoResultFound
+
+
+import logging
+
+logger = logging.getLogger("configure_logger")
 
 
 def get_all(db: Session):
-    """Retrieve all records of 'Dummy' from the database.
-
-    This function fetches all entries from the 'dummy' table using SQLAlchemy's ORM capabilities.
-
-    Args:
-        db (Session): The SQLAlchemy session facilitating database connectivity.
-
-    Returns:
-        List[models.Dummy]: A list of 'Dummy' model objects representing all records in the 'dummy' table.
-    """
     sqlalchemy_model = db.query(models.Dummy).all()
 
     if not sqlalchemy_model:
-        # logger.error("404: Object not found")
+        logger.error("404: Object not found")
         raise HTTPException(status_code=404, detail="Object not found")
 
     return sqlalchemy_model
 
 
+def get_object_or_404(db: Session, model, **criteria):
+    try:
+        return db.query(model).filter_by(**criteria).one()
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail="Object not found")
+
+
 def create(dummy: schemas.Dummy, db: Session):
-    """Create a new 'Dummy' record in the database.
-
-    This function takes a 'Dummy' schema object, maps it to the SQLAlchemy model, and stores it in the database.
-
-    Args:
-        db (Session): The SQLAlchemy session facilitating database connectivity.
-        dummy (schemas.Dummy): The Pydantic schema object representing the data to be added to the database.
-
-    Returns:
-        models.Dummy: The newly created 'Dummy' model object, now stored in the database.
-    """
-
-    existing_dummy = db.query(models.Dummy).filter(models.Dummy.name == dummy.name).first()
+    existing_dummy = (
+        db.query(models.Dummy).filter(models.Dummy.name == dummy.name).first()
+    )
     if existing_dummy:
-        # logger.error("Duplicate")
-        raise ValueError(f"Record including name '{dummy.name}' already exists")
-
+        logger.error("Duplicate")
+        raise HTTPException(
+            status_code=400,
+            detail="Record including name '{}' already exists".format(dummy.name),
+        )
 
     # Mapping the Pydantic schema object to the SQLAlchemy model
     sqlalchemy_model = models.Dummy()
@@ -61,51 +55,28 @@ def create(dummy: schemas.Dummy, db: Session):
 
 
 def modify_completely(dummy_id: int, dummy: schemas.Dummy, db: Session):
-    sqlalchemy_model = (
-        db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
-    )
+    sqlalchemy_model = get_object_or_404(db, models.Dummy, id=dummy_id)
 
-    if not sqlalchemy_model:
-        # logger.error("404: Object not found")
-        raise HTTPException(status_code=404, detail="Object not found")
-
-    sqlalchemy_model.name = dummy.name
-    sqlalchemy_model.description = dummy.description
-    sqlalchemy_model.optional_field = dummy.optional_field
-
-    db.add(sqlalchemy_model)
-    db.commit()
+    for key, value in dummy.dict().items():
+        setattr(sqlalchemy_model, key, value)
 
     return sqlalchemy_model
 
 
 def modify_partially(dummy_id: int, dummy: schemas.Dummy, db: Session):
-    sqlalchemy_model = (
-        db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
-    )
-
-    if not sqlalchemy_model:
-        # logger.error("404: Object not found")
-        raise HTTPException(status_code=404, detail="Object not found")
+    sqlalchemy_model = get_object_or_404(db, models.Dummy, id=dummy_id)
 
     update_data = dummy.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(sqlalchemy_model, key, value)
 
-    # db.add(sqlalchemy_model)
     db.commit()
 
     return sqlalchemy_model
 
 
 def delete(dummy_id: int, db: Session):
-    sqlalchemy_model = (
-        db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
-    )
-
-    if not sqlalchemy_model:
-        # logger.error("404: Object not found")
-        raise HTTPException(status_code=404, detail="Object not found")
+    sqlalchemy_model = get_object_or_404(db, models.Dummy, id=dummy_id)
 
     db.delete(sqlalchemy_model)
     db.commit()
@@ -114,12 +85,27 @@ def delete(dummy_id: int, db: Session):
 
 
 def get_one(db: Session, dummy_id: int):
-    sqlalchemy_model = (
-        db.query(models.Dummy).filter(models.Dummy.id == dummy_id).first()
+    return get_object_or_404(db, models.Dummy, id=dummy_id)
+
+
+def create_user(db: Session, user: schemas.UserInDB):
+    existing_user = (
+        db.query(models.User).filter(models.User.email == user.email).first()
     )
+    if existing_user:
+        logger.error("400: Email already exists")
+        raise HTTPException(status_code=400, detail="Email already exists")
 
-    if not sqlalchemy_model:
-        # logger.error("404: Object not found")
-        raise HTTPException(status_code=404, detail="Object not found")
+    db_user = models.User(
+        username=user.username,
+        email=user.email,
+        full_name=user.full_name,
+        password=user.hashed_password,
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
-    return sqlalchemy_model
+
+# TODO: put hashing here
