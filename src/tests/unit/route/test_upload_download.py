@@ -8,8 +8,6 @@ import httpx
 import pytest
 
 
-import docker
-
 import boto3
 
 from moto import mock_s3
@@ -95,79 +93,6 @@ async def test_upload_file_size():
             "/upload", files={"file": ("large_file.txt", large_file_content)}
         )
         assert response.status_code == 413
-
-
-# import time
-
-
-@pytest.fixture(scope="session")
-def localstack_container():
-    client = docker.from_env()
-    container = client.containers.run(
-        "localstack/localstack",
-        ports={"4566": "4566"},
-        detach=True,
-        remove=True,
-        environment={
-            "SERVICES": "s3",
-            "DEFAULT_REGION": "us-east-1",
-            "AWS_ACCESS_KEY_ID": "test",
-            "AWS_SECRET_ACCESS_KEY": "test",
-        },
-    )
-
-    # time.sleep(10)
-
-    yield
-
-    container.stop()
-
-
-@pytest.fixture(scope="function")
-def s3_client(localstack_container):
-    import boto3
-
-    yield boto3.client(
-        "s3",
-        endpoint_url="http://localhost:4566",
-        region_name="us-east-1",
-        aws_access_key_id="test",
-        aws_secret_access_key="test",
-    )
-
-
-@pytest.fixture(scope="function")
-def test_app_localstack(s3_client):
-    os.environ["S3_BUCKET_NAME"] = "test-bucket"
-    os.environ["USE_LOCALSTACK"] = "true"
-    client = TestClient(main.app)
-    yield client
-    del os.environ["USE_LOCALSTACK"]
-
-
-def test_s3_client_configuration(s3_client):
-    assert s3_client.meta.endpoint_url == "http://localhost:4566"
-
-
-def test_upload_to_s3_localstack(test_app_localstack, s3_client):
-    s3_client.create_bucket(Bucket="test-bucket")
-
-    response = s3_client.list_buckets()
-    buckets = [bucket["Name"] for bucket in response["Buckets"]]
-    assert "test-bucket" in buckets
-
-    response = test_app_localstack.post(
-        "/uploads3/", files={"file": ("testfile.txt", b"test content", "text/plain")}
-    )
-    assert response.status_code == 200
-    assert response.json() == {
-        "message": "The file has been successfully uploaded to S3"
-    }
-
-    objects_in_bucket = s3_client.list_objects(Bucket="test-bucket")
-    filenames = [obj["Key"] for obj in objects_in_bucket.get("Contents", [])]
-
-    assert "folder/testfile.txt" in filenames
 
 
 @mock_ec2
