@@ -25,10 +25,10 @@ Before diving into the package, it's important to familiarize yourself with a fe
 
 To run the package, you have two options depending on your preference:
 
-#### 1. Cloud infrastructure diagram - variant with RDS (x86_64 EC2)
+#### Option 1. Cloud infrastructure diagram - variant with RDS (x86_64 EC2)
 ![Cloud infrastructure diagram](/img/RDSschema.png "Cloud infrastructure diagram - variant with RDS")
 
-#### 2. Cloud infrastructure diagram - variant with Postgres as a microservice (x86_64 EC2)
+#### Option 2. Cloud infrastructure diagram - variant with Postgres as a microservice (x86_64 EC2)
 ![Cloud infrastructure diagram](img/dbmicroserviceschema.png "Cloud infrastructure diagram - variant with Postgres as a microservice")
 
 1. **AWS Deployment:** 
@@ -37,12 +37,15 @@ To run the package, you have two options depending on your preference:
    - Navigate to the `terraform` directory containing the `main.tf` Terraform configuration file. Choose a version using a Postgres database on AWS RDS or available as a microservice in EC2 with the application.
    - Execute `terraform plan` to review the planned infrastructure changes.
    - Apply these changes by running `terraform apply`.
+   - Use the public IP address in your browser to test the endpoints.
    - After you're done, and if you wish to tear down the infrastructure, use `terraform destroy`.
 
 2. **Local Deployment:**
    - Ensure you have Docker and Docker Compose installed on your local machine.
    - Run `docker compose up` from the main directory containing your `docker-compose.yml` file. 
    - This will start the application locally using Docker.
+   - Read the terminal log. Open http://0.0.0.0:80/docs and test endpoints via Swagger UI (more on: https://fastapi.tiangolo.com/tutorial/first-steps/#interactive-api-docs)
+   - Kill using CTRL+C
 
 ### Streamlined AWS Integration :cloud:
 
