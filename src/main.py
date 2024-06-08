@@ -14,7 +14,10 @@ from slowapi.errors import RateLimitExceeded
 
 from configure_logger import configure_logger
 
+
 logger = configure_logger()
+
+logger.debug(f"Current working directory: {os.getcwd()}")
 
 app = FastAPI()
 
@@ -36,6 +39,6 @@ app.include_router(files.router)
 
 if __name__ == "__main__":
     if os.environ.get("RUNNING_IN_CONTAINER"):
-        uvicorn.run("main:app", host="0.0.0.0", port=80)
+        uvicorn.run("main:app", host="0.0.0.0", port=80, log_config=None)
     else:
-        uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+        uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True, log_config=None)

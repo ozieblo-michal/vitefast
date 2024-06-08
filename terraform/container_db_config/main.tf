@@ -299,7 +299,7 @@ resource "aws_instance" "my_ec2_instance" {
 
               services:
                 app:
-                  image: ozieblomichal/fastapi-template:dev2
+                  image: ozieblomichal/fastapi-template:latest
                   depends_on:
                     - db
                   ports:

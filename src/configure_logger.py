@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timedelta
+import os
 
 
 def configure_logger() -> logging.Logger:
@@ -29,7 +30,9 @@ def configure_logger() -> logging.Logger:
 
     timestamp = f"{date_str} {hour_str}-{next_hour_str}"
 
-    log_path = f"logs/{timestamp}.log"
+    log_path = f"src/logs/{timestamp}.log"
+
+    os.makedirs("src/logs", exist_ok=True)
 
     logger = logging.getLogger("configure_logger")
 
@@ -41,7 +44,7 @@ def configure_logger() -> logging.Logger:
 
     if not logger.handlers:
         file_handler = logging.FileHandler(log_path)
-        file_handler.setLevel(logging.ERROR)
+        file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 

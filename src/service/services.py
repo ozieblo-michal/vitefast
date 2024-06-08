@@ -13,6 +13,13 @@ import logging
 logger = logging.getLogger("configure_logger")
 
 
+def generate_error():
+    logger = logging.getLogger("configure_logger")
+    logger.error("This is a test error message")
+    raise HTTPException(status_code=500, detail="This is a test error")
+
+
+
 def get_all(db: Session):
     sqlalchemy_model = db.query(models.Dummy).all()
 
@@ -27,6 +34,7 @@ def get_object_or_404(db: Session, model, **criteria):
     try:
         return db.query(model).filter_by(**criteria).one()
     except NoResultFound:
+        logger.error("404: Object not found")
         raise HTTPException(status_code=404, detail="Object not found")
 
 

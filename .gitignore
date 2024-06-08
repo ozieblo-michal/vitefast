@@ -20,6 +20,8 @@ site_build
 venv
 docs.zip
 archive.zip
+demodb.db
+notes.txt
 
 *~
 .*.sw?

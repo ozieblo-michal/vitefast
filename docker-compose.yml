@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: ozieblomichal/fastapi-template:dev2
+    image: ozieblomichal/fastapi-template:latest
     depends_on:
       - db
     ports:

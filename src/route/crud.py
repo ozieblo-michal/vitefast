@@ -11,6 +11,15 @@ from schema.schemas import Dummy, DummyPatch, User
 router = APIRouter()
 
 
+
+
+@router.get("/generate-error")
+def generate_error():
+    return dummy_service.generate_error()
+    
+
+
+
 @router.get("")
 @router.get("/")
 @limiter.limit("5/minute")

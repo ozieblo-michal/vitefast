@@ -69,7 +69,7 @@ To run the package, you have two options depending on your preference:
 FastAPI is a modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints. The key features are:
 
 - **Fast**: Very high performance, on par with NodeJS and Go (thanks to Starlette and Pydantic). One of the fastest Python frameworks available.
-- **Fast to code**: Increase the speed to develop features by about 200% to 300%. 
+- **Fast to code**: Increase the speed to develop features by about 200% to 300%.
 - **Fewer bugs**: Reduce about 40% of human (developer) induced errors.
 - **Intuitive**: Great editor support. Completion everywhere. Less time debugging.
 - **Easy**: Designed to be easy to use and learn. Less time reading docs.
@@ -93,9 +93,15 @@ The choice between AWS RDS and a containerized Postgres hinges on needs for the 
 
 ### How to Run Tests :white_check_mark:
 
-- `cd src`: Change directory to the source code.
+`docker exec -it fastapi-engine-app-1 /bin/sh` : Enter the running Docker container with an interactive shell.
 
-- `poetry run python -m pytest .` : Runs tests using pytest within the poetry environment.
+`poetry shell` : Activate the Poetry virtual environment.
+
+`cd src` : Change directory to the source code.
+
+`poetry run python -m pytest .` : Run tests using pytest within the Poetry environment.
+
+`exit` : Exit the interactive shell in the Docker container.
 
 ### Conclusion :bulb:
 
