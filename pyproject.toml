@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "fastapi-templates"
+name = "vitefast"
 version = "0.1.0"
-description = "templates and exercises"
-authors = ["Your Name <ozieblo.michal@gmail.com>"]
+description = "FastAPI and ReactJS with Vite templates"
+authors = ["Michal Ozieblo <ozieblo.michal@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

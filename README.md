@@ -11,7 +11,7 @@
 
 ### Introduction :wave:
 
-This repository is a **ready-to-use web applications backend template, designed for  effortless deployment**. It was crafted to ease rapid and easy customization, catering to diverse needs and preferences. **Documentation focuses on 'why' and 'how', not 'what'**. The package follows the best coding and architectural practices as of January 2024.
+This repository is a **ready-to-use web applications backend template, designed for  effortless deployment**. It was crafted to ease rapid and easy customization, catering to diverse needs and preferences. **Documentation focuses on 'why' and 'how', not 'what'**. The package follows the best coding and architectural practices.
 
 ### Prerequisites for Working with the Package :school:
 
@@ -33,7 +33,20 @@ To run the package, you have two options depending on your preference:
 
 1. **AWS Deployment:** 
    - First, log in to your AWS account using the AWS Command Line Interface (CLI).
-   - Install Terraform on your machine.
+   - Install Terraform on your machine, for example by a command in the terminal:
+
+   macOS: 
+
+   `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && brew tap hashicorp/tap && brew install hashicorp/tap/terraform`
+
+   Windows (PowerShell): 
+
+   `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')) && choco install terraform -y`
+
+   Ubuntu/Debian: 
+
+   `curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" && sudo apt-get update && sudo apt-get install terraform -y`
+
    - Navigate to the `terraform` directory containing the `main.tf` Terraform configuration file. Choose a version using a Postgres database on AWS RDS or available as a microservice in EC2 with the application.
    - Execute `terraform plan` to review the planned infrastructure changes.
    - Apply these changes by running `terraform apply`.
@@ -61,20 +74,25 @@ To run the package, you have two options depending on your preference:
 
 ### Technology and Best Practices :star:
 
-**Current Package Versions:** As of January 2024, all packages are up-to-date, offering latest features, security patches, and optimizations.
+**Dependency Management Tools: Poetry vs. Pip**
+pip is the fundamental tool for installing Python packages, suitable for basic dependency management and often used with virtualenv for isolated environments. Poetry, on the other hand, provides an all-in-one solution for managing dependencies, virtual environments, and packaging. It uses pyproject.toml for configuration, resolves and locks dependencies automatically, and offers built-in commands for initializing projects and publishing packages, making it a powerful choice for comprehensive Python project management.
 
 **Best Coding and Architectural Practices:** The package was built with a strong emphasis on best practices in coding and architecture. This includes the use of Alpine-based images, known for their lightweight and security-focused design. These practices enhance the performance and security of applications.
 
 ### Why FastAPI, not Flask :muscle:
 FastAPI is a modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints. The key features are:
 
-- **Fast**: Very high performance, on par with NodeJS and Go (thanks to Starlette and Pydantic). One of the fastest Python frameworks available.
-- **Fast to code**: Increase the speed to develop features by about 200% to 300%.
-- **Fewer bugs**: Reduce about 40% of human (developer) induced errors.
-- **Intuitive**: Great editor support. Completion everywhere. Less time debugging.
-- **Easy**: Designed to be easy to use and learn. Less time reading docs.
-- **Short**: Minimize code duplication. Multiple features from each parameter declaration. Fewer bugs.
-- **Robust**: Get production-ready code. With automatic interactive documentation.
+- **Fast**: Very high performance, comparable to NodeJS and Go (thanks to Starlette and Pydantic). One of the fastest Python frameworks available.
+- **Fast to code**: Increases feature development speed by approximately 200% to 300%.*
+- **Fewer bugs**: Reduces human (developer) induced errors by about 40%.*
+- **Intuitive**: Excellent editor support. Auto-completion everywhere. Less time spent debugging.
+- **Easy**: Designed to be easy to use and learn. Less time spent reading documentation.
+- **Short**: Minimizes code duplication. Multiple features from each parameter declaration. Fewer bugs.
+- **Robust**: Produces production-ready code with automatic interactive documentation.
+
+*more on: https://fastapi.tiangolo.com
+
+
 
 ### Advantages of Using Alpine Images for Ubuntu and Postgres :mount_fuji:
 Alpine was renowned for its minimalistic size, which results in lighter and faster containers. It reduces the download and deployment time, but also lessens the resource consumption. It makes it ideal for environments with limited resources. Alpine's minimalistic nature means also fewer components susceptible to vulnerabilities, enhancing the security of the containers. This makes Alpine an excellent choice for streamlined, secure, and efficient containerized applications.
