@@ -1,7 +1,12 @@
+# IDE/Editor-specific files
 .idea
+.vscode
+*.swp
+*.swo
+
+# Python-specific files
 .ipynb_checkpoints
 .mypy_cache
-.vscode
 __pycache__
 .pytest_cache
 htmlcov
@@ -9,7 +14,6 @@ dist
 site
 .coverage
 coverage.xml
-.netlify
 test.db
 log.txt
 Pipfile.lock
@@ -22,28 +26,50 @@ docs.zip
 archive.zip
 demodb.db
 notes.txt
-
 *~
 .*.sw?
 .cache
-
 .DS_Store
 
+# Terraform-specific files
 *.tfstate
 *.tfstate.*
-
 .terraform/
-
-.env
 *.tfvars
 *.tfvars.json
-
 *.tflog
-
 crash.log
 override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
 
+# Visual Studio-specific files
 .vs
+
+# Node.js-specific files
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+dist/
+build/
+public/
+.vite/
+
+# Environment variable files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vite-specific files
+.cache/
+.vite/
+
+# Log files
+*.log
+
+# MacOS-specific files
+.DS_Store

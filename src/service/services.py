@@ -68,6 +68,9 @@ def modify_completely(dummy_id: int, dummy: schemas.Dummy, db: Session):
     for key, value in dummy.dict().items():
         setattr(sqlalchemy_model, key, value)
 
+    db.commit()
+    db.refresh(sqlalchemy_model)
+
     return sqlalchemy_model
 
 
@@ -79,6 +82,7 @@ def modify_partially(dummy_id: int, dummy: schemas.Dummy, db: Session):
         setattr(sqlalchemy_model, key, value)
 
     db.commit()
+    db.refresh(sqlalchemy_model)
 
     return sqlalchemy_model
 

@@ -34,7 +34,7 @@ def credentials_exception():
 
 # Setting up OAuth2 with Password (and Bearer) as the authentication method.
 # The tokenUrl parameter indicates the URL where the client can get the token.
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
 
 # Function to verify the password input against the stored hashed password.

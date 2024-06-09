@@ -1,38 +1,130 @@
-.App {
-  text-align: center;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f2f2f7;
+  margin: 0;
+  padding: 0;
+  color: #333;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+h1 {
+  text-align: left;
+  color: #1c1c1e;
+  font-weight: 600;
+  margin-top: 20px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.subtitle {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 50px;
+}
+
+.subtitle h2 {
+  margin: 0 5px 0 0;
+  font-weight: 400;
+  color: #555;
+}
+
+.subtitle a {
+  text-decoration: none;
+  color: #007aff;
+  margin-left: 5px;
+}
+
+.github-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 5px;
+}
+
+form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+input {
+  margin-bottom: 15px;
+  padding: 12px;
+  border: 1px solid #d1d1d6;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  border-color: #007aff;
+  outline: none;
+}
+
+button {
+  padding: 12px;
+  border: none;
   color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s;
+  margin-top: 10px;
 }
 
-.App-link {
-  color: #61dafb;
+button.primary {
+  background: #007aff;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+button.primary:hover {
+  background: #005bb5;
+}
+
+button.secondary {
+  background: #8e8e93;
+}
+
+button.secondary:hover {
+  background: #6c6c70;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+li {
+  background: #ffffff;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+li p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+h2 {
+  text-align: center;
+  color: #3a3a3c;
+  font-weight: 500;
+  margin-top: 30px;
+}
+
+h2 + ul {
+  margin-top: 0;
 }
