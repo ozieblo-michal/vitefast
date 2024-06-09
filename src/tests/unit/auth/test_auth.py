@@ -85,7 +85,7 @@ def test_get_current_user(test_db):
 
     token = auth.create_access_token(user_data)
 
-    current_user = client.get("/users/me", headers={"Authorization": f"Bearer {token}"})
+    current_user = client.get("auth/users/me", headers={"Authorization": f"Bearer {token}"})
     assert current_user.status_code == 200
     assert current_user.json()["username"] == "testuser"
 
@@ -95,7 +95,7 @@ def test_get_current_active_user_inactive():
 
     token = auth.create_access_token(user_data)
 
-    response = client.get("/users/me", headers={"Authorization": f"Bearer {token}"})
+    response = client.get("auth/users/me", headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 400
     assert "Inactive user" in response.text
 
@@ -103,7 +103,7 @@ def test_get_current_active_user_inactive():
 def test_login_for_access_token():
     login_data = {"username": "testuser", "password": "testpassword"}
 
-    response = client.post("/token", data=login_data)
+    response = client.post("auth/token", data=login_data)
 
     assert response.status_code == 200
     assert "access_token" in response.json()

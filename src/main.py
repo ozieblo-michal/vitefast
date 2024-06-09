@@ -34,7 +34,7 @@ app.add_middleware(
 
 app.include_router(crud.router, prefix="/dummy")
 app.include_router(auth.router, prefix="/auth")
-app.include_router(files.router, prefix="/file")
+app.include_router(files.router)
 
 
 if __name__ == "__main__":

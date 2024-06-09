@@ -69,7 +69,7 @@ def test_read_dummy(test_db):
 
 
 def test_rate_limiter(test_db):
-    for _ in range(5):
+    for _ in range(60):
         response = client.get("/dummy")
         assert response.status_code in [200, 429]
 
