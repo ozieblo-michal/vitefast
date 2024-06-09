@@ -7,7 +7,7 @@
 ![Pylint](https://img.shields.io/badge/linter-pylint-blue.svg)
 
 
-# FastAPI engine :rocket:
+# ViteFast - FastAPI and ReactJS with Vite starter :rocket:
 
 ### Introduction :wave:
 
