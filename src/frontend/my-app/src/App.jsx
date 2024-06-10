@@ -241,7 +241,7 @@ function App() {
           {response && (
             <div>
               <h2>Response:</h2>
-              <p>ID: {response.id}</p>
+              {/* <p>ID: {response.id}</p> */}
               <p>Name: {response.name}</p>
               <p>Description: {response.description}</p>
               {response.optional_field && <p>Optional Field: {response.optional_field}</p>}

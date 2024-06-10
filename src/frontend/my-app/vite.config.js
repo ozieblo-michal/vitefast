@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    outDir: 'dist',
+  },
+  base: "/vitefast/",
   server: {
     proxy: {
       '/dummy': 'http://localhost:80',
