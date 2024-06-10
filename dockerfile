@@ -51,7 +51,7 @@ COPY pyproject.toml poetry.lock ./
 
 RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR 
 
-COPY ./src /src
+COPY ./src/backend /src
 
 RUN mkdir /logs
 

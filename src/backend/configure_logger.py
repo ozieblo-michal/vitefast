@@ -30,9 +30,9 @@ def configure_logger() -> logging.Logger:
 
     timestamp = f"{date_str} {hour_str}-{next_hour_str}"
 
-    log_path = f"src/logs/{timestamp}.log"
+    log_path = f"./logs/{timestamp}.log"
 
-    os.makedirs("src/logs", exist_ok=True)
+    os.makedirs("./logs", exist_ok=True)
 
     logger = logging.getLogger("configure_logger")
 
