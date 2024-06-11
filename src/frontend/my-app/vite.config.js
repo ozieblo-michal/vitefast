@@ -12,11 +12,10 @@ export default defineConfig(({ mode }) => {
     base: "/vitefast/",
     server: {
       proxy: {
-        '/api': {
+        '/': {
           target: env.VITE_BACKEND_URL,
           changeOrigin: true,
           secure: true,
-          rewrite: path => path.replace(/^\/api/, ''),
         },
       },
     },
