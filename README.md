@@ -56,7 +56,7 @@ To run the package, you have two options depending on your preference:
    - Apply these changes by running `terraform apply`.
 
    `cd terraform/container_db_config && terraform init && terraform plan && terraform apply -auto-approve`
-   
+
    - Use the public IP address in your browser to test the endpoints.
    - After you're done, and if you wish to tear down the infrastructure, use `terraform destroy`.
 
@@ -133,3 +133,60 @@ The choice between AWS RDS and a containerized Postgres hinges on needs for the 
 This package is more than an engine. Whether you are a beginner looking to understand the intricacies of AWS services and application deployment, or an experienced developer seeking a quick and reliable solution for your AWS-based projects, this package was crafted to meet your needs.
 
 I welcome contributions, feedback, and inquiries to continually improve and update this repository. Let's build and learn together!
+
+
+
+
+
+
+
+
+
+
+sudo apt-get update
+sudo apt-get install nginx -y
+sudo mkdir -p /etc/nginx/ssl/
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx-selfsigned.key -out /etc/nginx/ssl/nginx-selfsigned.crt -subj "/CN=<<<IP ADDRESS>>>"
+sudo nano /etc/nginx/sites-available/default
+sudo systemctl start nginx
+sudo systemctl reload nginx
+
+
+openssl s_client -connect <<<IP ADDRESS>>>
+
+
+
+
+
+
+server {
+    listen 81 ssl;
+    server_name <<<IP ADDRESS>>>;
+
+    ssl_certificate /etc/nginx/ssl/nginx-selfsigned.crt;
+    ssl_certificate_key /etc/nginx/ssl/nginx-selfsigned.key;
+
+    location / {
+        proxy_pass http://localhost:80;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name 52.31.107.76;
+
+    ssl_certificate /etc/nginx/ssl/nginx-selfsigned.crt;
+    ssl_certificate_key /etc/nginx/ssl/nginx-selfsigned.key;
+
+    location / {
+        proxy_pass http://localhost:80;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
