@@ -238,7 +238,7 @@ function App() {
       <h1>Simple Vite and FastAPI App</h1>
       {!token && (
         <h3 className="subtitle">
-          Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}:81`} target="_blank" rel="noopener noreferrer">{`${backendUrl}:81/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
+          Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}`} target="_blank" rel="noopener noreferrer">{`${backendUrl}:81/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
         </h3>
       )}
       <div className="subtitle">
@@ -345,8 +345,6 @@ function App() {
           )}
           <div className="upload-buttons">
             <input type="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
-          </div>
-          <div className="upload-buttons">
             <button className="upload-to-local" onClick={handleFileUpload}>Upload to Local</button>
             <button className="upload-to-s3" onClick={handleFileUploadToS3}>Upload to S3</button>
           </div>
@@ -368,7 +366,7 @@ function App() {
             {s3Files.length > 0 ? (
               s3Files.map((file, index) => (
                 <li key={index} className="file-item">
-                  <a href={`${backendUrl}/download_s3/${file}`} target="_blank" rel="noopener noreferrer">{file}</a>
+                  <span>{file}</span>
                   <button onClick={() => handleFileDeleteFromS3(file)}>Delete</button>
                 </li>
               ))

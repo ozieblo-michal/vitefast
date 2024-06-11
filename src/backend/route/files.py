@@ -81,27 +81,6 @@ async def upload_to_s3(file: UploadFile = File(...)):
 
     return {"message": "The file has been successfully uploaded to S3"}
 
-@router.get("/download_s3/{filename}")
-async def download_from_s3(filename: str):
-    bucket_name = os.getenv("S3_BUCKET_NAME")
-    file_name_in_s3 = "folder/" + filename
-
-    if os.getenv("USE_LOCALSTACK") == "true":
-        s3 = boto3.client(
-            "s3",
-            endpoint_url="http://localhost:4566",
-            region_name="us-east-1",
-            aws_access_key_id="test",
-            aws_secret_access_key="test",
-        )
-    else:
-        s3 = boto3.client("s3")
-
-    try:
-        s3.download_file(bucket_name, file_name_in_s3, f"downloads/{filename}")
-        return FileResponse(path=f"downloads/{filename}", filename=filename)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/delete_from_s3/{filename}")
 async def delete_from_s3(filename: str):
