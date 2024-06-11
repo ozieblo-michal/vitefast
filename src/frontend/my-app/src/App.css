@@ -19,19 +19,11 @@ h1 {
   margin-top: 20px;
 }
 
-
-.subtitle {
-  text-align: left;
-  margin-left: 1em;
-}
-
 .github-icon {
   width: 24px;
   height: 24px;
   vertical-align: middle;
 }
-
-
 
 .subtitle h2 {
   margin: 0 5px 0 0;
@@ -42,12 +34,6 @@ h1 {
 .subtitle a {
   text-decoration: none;
   color: #007aff;
-  margin-left: 5px;
-}
-
-.github-icon {
-  width: 24px;
-  height: 24px;
   margin-left: 5px;
 }
 
@@ -134,4 +120,62 @@ h2 {
 
 h2 + ul {
   margin-top: 0;
+}
+
+.subtitle {
+  text-align: left; /* Upewnij się, że podtytuły są wyrównane do lewej */
+  margin-left: 0; /* Usuń margines, aby wyrównać do nagłówka tytularnego */
+}
+
+.github-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  margin-left: 10px; /* Dostosuj wartość w razie potrzeby */
+}
+
+.upload-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.upload-to-local {
+  background-color: orange;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.upload-to-s3 {
+  background-color: green;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.file-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.file-item button {
+  margin-left: 10px;
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
 }

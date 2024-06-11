@@ -237,13 +237,14 @@ function App() {
     <div>
       <h1>Simple Vite and FastAPI App</h1>
       <h3 className="subtitle">
-        Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}:81`} target="_blank" rel="noopener noreferrer">{`${backendUrl}/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
+        Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}:81`} target="_blank" rel="noopener noreferrer">{`${backendUrl}:81/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
       </h3>
       <div className="subtitle">
-        <h2>Source: <a href="https://github.com/ozieblo-michal/vitefast">ViteFast</a></h2>
-        <a href="https://github.com/ozieblo-michal/vitefast">
-          <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" className="github-icon" />
-        </a>
+        <h2>Source: <a href="https://github.com/ozieblo-michal/vitefast">ViteFast</a>
+          <a href="https://github.com/ozieblo-michal/vitefast">
+            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" className="github-icon" />
+          </a>
+        </h2>
       </div>
       
       {!token ? (
@@ -342,13 +343,15 @@ function App() {
             </div>
           )}
           <h2>Local Files</h2>
-          <input type="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
-          <button onClick={handleFileUpload}>Upload to Local</button>
-          <button onClick={handleFileUploadToS3}>Upload to S3</button>
-          <ul>
+          <div className="upload-buttons">
+            <input type="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+            <button className="upload-to-local" onClick={handleFileUpload}>Upload to Local</button>
+            <button className="upload-to-s3" onClick={handleFileUploadToS3}>Upload to S3</button>
+          </div>
+          <ul className="file-list">
             {localFiles.length > 0 ? (
               localFiles.map((file, index) => (
-                <li key={index}>
+                <li key={index} className="file-item">
                   <a href={`${backendUrl}/download/${file}`} target="_blank" rel="noopener noreferrer">{file}</a>
                   <button onClick={() => handleFileDelete(file)}>Delete</button>
                 </li>
@@ -358,10 +361,10 @@ function App() {
             )}
           </ul>
           <h2>S3 Files</h2>
-          <ul>
+          <ul className="file-list">
             {s3Files.length > 0 ? (
               s3Files.map((file, index) => (
-                <li key={index}>
+                <li key={index} className="file-item">
                   <a href={`${backendUrl}/download_s3/${file}`} target="_blank" rel="noopener noreferrer">{file}</a>
                   <button onClick={() => handleFileDeleteFromS3(file)}>Delete</button>
                 </li>
