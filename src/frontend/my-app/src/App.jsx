@@ -238,7 +238,7 @@ function App() {
       <h1>Simple Vite and FastAPI App</h1>
       {!token && (
         <h3 className="subtitle">
-          Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}`} target="_blank" rel="noopener noreferrer">{`${backendUrl}:81/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
+          Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}`} target="_blank" rel="noopener noreferrer">{`${backendUrl}/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
         </h3>
       )}
       <div className="subtitle">
