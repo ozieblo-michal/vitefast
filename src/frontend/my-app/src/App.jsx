@@ -236,9 +236,11 @@ function App() {
   return (
     <div>
       <h1>Simple Vite and FastAPI App</h1>
-      <h3 className="subtitle">
-        Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}:81`} target="_blank" rel="noopener noreferrer">{`${backendUrl}:81/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
-      </h3>
+      {!token && (
+        <h3 className="subtitle">
+          Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}:81`} target="_blank" rel="noopener noreferrer">{`${backendUrl}:81/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
+        </h3>
+      )}
       <div className="subtitle">
         <h2>Source: <a href="https://github.com/ozieblo-michal/vitefast">ViteFast</a>
           <a href="https://github.com/ozieblo-michal/vitefast">
@@ -336,7 +338,6 @@ function App() {
           {response && (
             <div>
               <h2>Response:</h2>
-              {/* <p>ID: {response.id}</p> */}
               <p>Name: {response.name}</p>
               <p>Description: {response.description}</p>
               {response.optional_field && <p>Optional Field: {response.optional_field}</p>}

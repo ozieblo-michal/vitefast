@@ -123,15 +123,15 @@ h2 + ul {
 }
 
 .subtitle {
-  text-align: left; /* Upewnij się, że podtytuły są wyrównane do lewej */
-  margin-left: 0; /* Usuń margines, aby wyrównać do nagłówka tytularnego */
+  text-align: left;
+  margin-left: 0;
 }
 
 .github-icon {
   width: 24px;
   height: 24px;
   vertical-align: middle;
-  margin-left: 10px; /* Dostosuj wartość w razie potrzeby */
+  margin-left: 10px;
 }
 
 .upload-buttons {
