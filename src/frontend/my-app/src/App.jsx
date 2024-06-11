@@ -343,12 +343,14 @@ function App() {
               {response.optional_field && <p>Optional Field: {response.optional_field}</p>}
             </div>
           )}
-          <h2>Local Files</h2>
           <div className="upload-buttons">
             <input type="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+          </div>
+          <div className="upload-buttons">
             <button className="upload-to-local" onClick={handleFileUpload}>Upload to Local</button>
             <button className="upload-to-s3" onClick={handleFileUploadToS3}>Upload to S3</button>
           </div>
+          <h2>Local Files</h2>
           <ul className="file-list">
             {localFiles.length > 0 ? (
               localFiles.map((file, index) => (
