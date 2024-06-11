@@ -16,12 +16,17 @@ function App() {
   const [registerMode, setRegisterMode] = useState(false);
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [s3Files, setS3Files] = useState([]);
+  const [localFiles, setLocalFiles] = useState([]);
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://localhost:80';
 
   useEffect(() => {
     if (token) {
       fetchDummies();
+      fetchS3Files();
+      fetchLocalFiles();
     }
   }, [token]);
 
@@ -39,6 +44,28 @@ function App() {
       } else {
         console.error('Error fetching dummies:', err);
       }
+    }
+  };
+
+  const fetchS3Files = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}/list_s3_files`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setS3Files(res.data.files);
+    } catch (err) {
+      console.error('Error fetching S3 files:', err);
+    }
+  };
+
+  const fetchLocalFiles = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}/list_local_files`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setLocalFiles(res.data.files);
+    } catch (err) {
+      console.error('Error fetching local files:', err);
     }
   };
 
@@ -145,12 +172,111 @@ function App() {
     localStorage.removeItem('token');
   };
 
+  const handleFileUpload = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      const res = await axios.post(`${backendUrl}/uploads3`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('File uploaded successfully:', res.data);
+      setSelectedFile(null);
+      fetchS3Files();
+    } catch (err) {
+      console.error('Error uploading file:', err);
+    }
+  };
+
+  const handleFileDelete = async (filename) => {
+    try {
+      await axios.delete(`${backendUrl}/delete_from_s3/${filename}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchS3Files();
+    } catch (err) {
+      console.error('Error deleting file from S3:', err);
+    }
+  };
+
+  const handleLocalFileUpload = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      const res = await axios.post(`${backendUrl}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('File uploaded locally successfully:', res.data);
+      setSelectedFile(null);
+      fetchLocalFiles();
+    } catch (err) {
+      console.error('Error uploading local file:', err);
+    }
+  };
+
+  const handleLocalFileDelete = async (filename) => {
+    try {
+      await axios.delete(`${backendUrl}/delete_local_file/${filename}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchLocalFiles();
+    } catch (err) {
+      console.error('Error deleting local file:', err);
+    }
+  };
+
+  const handleDownloadS3File = async (filename) => {
+    try {
+      const res = await axios.get(`${backendUrl}/download_s3/${filename}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+    } catch (err) {
+      console.error('Error downloading S3 file:', err);
+    }
+  };
+
+  const handleDownloadLocalFile = async (filename) => {
+    try {
+      const res = await axios.get(`${backendUrl}/download/${filename}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+    } catch (err) {
+      console.error('Error downloading local file:', err);
+    }
+  };
+
   return (
     <div>
       <h1>Simple Vite and FastAPI App</h1>
+      <h3 className="subtitle">
+        Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}:81`} target="_blank" rel="noopener noreferrer">{`${backendUrl}:81/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
+      </h3>
       <div className="subtitle">
-        <h2>Source: <a href="https://github.com/ozieblo-michal/fastAPI-engine">fastAPI-engine</a></h2>
-        <a href="https://github.com/ozieblo-michal/fastAPI-engine">
+        <h2>Source: <a href="https://github.com/ozieblo-michal/vitefast">ViteFast</a></h2>
+        <a href="https://github.com/ozieblo-michal/vitefast">
           <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" className="github-icon" />
         </a>
       </div>
@@ -264,6 +390,56 @@ function App() {
               ))
             ) : (
               <p>No dummies available.</p>
+            )}
+          </ul>
+
+          <h2>Upload File to S3</h2>
+          <form onSubmit={handleFileUpload}>
+            <input
+              type="file"
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+              required
+            />
+            <button className="primary" type="submit">Upload</button>
+          </form>
+
+          <h2>Upload File Locally</h2>
+          <form onSubmit={handleLocalFileUpload}>
+            <input
+              type="file"
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+              required
+            />
+            <button className="primary" type="submit">Upload</button>
+          </form>
+
+          <h2>Local Files</h2>
+          <ul>
+            {localFiles.length > 0 ? (
+              localFiles.map((file) => (
+                <li key={file}>
+                  <p>{file}</p>
+                  <button className="secondary" onClick={() => handleDownloadLocalFile(file)}>Download</button>
+                  <button className="secondary" onClick={() => handleLocalFileDelete(file)}>Delete</button>
+                </li>
+              ))
+            ) : (
+              <p>No local files available.</p>
+            )}
+          </ul>
+
+          <h2>S3 Files</h2>
+          <ul>
+            {s3Files.length > 0 ? (
+              s3Files.map((file) => (
+                <li key={file}>
+                  <p>{file}</p>
+                  <button className="secondary" onClick={() => handleDownloadS3File(file)}>Download</button>
+                  <button className="secondary" onClick={() => handleFileDelete(file)}>Delete</button>
+                </li>
+              ))
+            ) : (
+              <p>No files in S3.</p>
             )}
           </ul>
         </>
