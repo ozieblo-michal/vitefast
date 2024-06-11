@@ -25,6 +25,8 @@ jobs:
 
       - name: Build project
         working-directory: src/frontend/my-app
+        env:
+          REACT_APP_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
         run: npm run build
 
       - name: Upload production-ready build files
@@ -37,7 +39,7 @@ jobs:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev'  # Upewnij się, że warunek jest zgodny z twoją gałęzią
+    if: github.ref == 'refs/heads/dev'
 
     steps:
       - name: Download artifact

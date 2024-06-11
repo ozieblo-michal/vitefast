@@ -33,6 +33,10 @@ To run the package, you have two options depending on your preference:
 
 1. **AWS Deployment:** 
    - First, log in to your AWS account using the AWS Command Line Interface (CLI).
+
+   `aws configure`
+
+
    - Install Terraform on your machine, for example by a command in the terminal:
 
    macOS: 
@@ -50,6 +54,9 @@ To run the package, you have two options depending on your preference:
    - Navigate to the `terraform` directory containing the `main.tf` Terraform configuration file. Choose a version using a Postgres database on AWS RDS or available as a microservice in EC2 with the application.
    - Execute `terraform plan` to review the planned infrastructure changes.
    - Apply these changes by running `terraform apply`.
+
+   `cd terraform/container_db_config && terraform init && terraform plan && terraform apply -auto-approve`
+   
    - Use the public IP address in your browser to test the endpoints.
    - After you're done, and if you wish to tear down the infrastructure, use `terraform destroy`.
 

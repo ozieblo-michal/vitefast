@@ -17,6 +17,9 @@ function App() {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
 
+  // Pobierz URL backendu z zmiennej środowiskowej
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:80';
+
   useEffect(() => {
     if (token) {
       fetchDummies();
@@ -25,7 +28,7 @@ function App() {
 
   const fetchDummies = async () => {
     try {
-      const res = await axios.get('http://localhost:80/dummy', {
+      const res = await axios.get(`${backendUrl}/dummy`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log('Fetched dummies:', res.data);
@@ -52,14 +55,14 @@ function App() {
     try {
       let res;
       if (updateMode) {
-        const url = `http://localhost:80/dummy/${dummyId}`;
+        const url = `${backendUrl}/dummy/${dummyId}`;
         console.log('PUT URL:', url);
         console.log('PUT dummyId:', dummyId);
         res = await axios.put(url, dummyData, {
           headers: { Authorization: `Bearer ${token}` },
         });
       } else {
-        const url = 'http://localhost:80/dummy';
+        const url = `${backendUrl}/dummy`;
         console.log('POST URL:', url);
         res = await axios.post(url, dummyData, {
           headers: { Authorization: `Bearer ${token}` },
@@ -90,7 +93,7 @@ function App() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:80/dummy/${id}`, {
+      await axios.delete(`${backendUrl}/dummy/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchDummies();
@@ -102,7 +105,7 @@ function App() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:80/auth/token', new URLSearchParams({
+      const res = await axios.post(`${backendUrl}/auth/token`, new URLSearchParams({
         username,
         password,
       }));
@@ -125,7 +128,7 @@ function App() {
     console.log('Registering user with data:', userData);
 
     try {
-      const res = await axios.post('http://localhost:80/auth/users/', userData);
+      const res = await axios.post(`${backendUrl}/auth/users/`, userData);
       console.log('User registered successfully:', res.data);
       setRegisterMode(false);
     } catch (err) {

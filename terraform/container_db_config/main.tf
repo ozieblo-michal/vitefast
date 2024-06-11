@@ -161,10 +161,10 @@ resource "aws_iam_role" "ec2_s3_access_role" {
 
 
 resource "aws_s3_bucket" "my_bucket" {
-  bucket = "ozieblomichal-fastapi-template-bucket" 
+  bucket = "ozieblomichal-vitefast-bucket" 
 
   tags = {
-    Name = "MojBucket"
+    Name = "vitefast-bucket"
   }
 }
 
@@ -213,7 +213,7 @@ resource "aws_iam_role" "ec2_cloudwatch_log_role" {
 
 resource "aws_iam_policy" "ec2_cloudwatch_log_policy" {
   name        = "EC2CloudWatchLogPolicy"
-  description = "Polityka umożliwiająca EC2 wysyłanie logów do CloudWatch"
+  description = "Policy enabling EC2 to send logs to CloudWatch"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -246,7 +246,7 @@ resource "aws_iam_instance_profile" "ec2_s3_access_profile" {
 
 resource "aws_iam_policy" "ec2_cloudwatch_logs_policy" {
   name        = "EC2CloudWatchLogsPolicy"
-  description = "Polityka umożliwiająca EC2 wysyłanie logów do CloudWatch Logs"
+  description = "Policy enabling EC2 to send logs to CloudWatch Logs"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -299,7 +299,7 @@ resource "aws_instance" "my_ec2_instance" {
 
               services:
                 app:
-                  image: ozieblomichal/fastapi-template:latest
+                  image: ozieblomichal/vitefast:latest
                   depends_on:
                     - db
                   ports:
