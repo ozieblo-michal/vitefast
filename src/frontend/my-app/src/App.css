@@ -21,11 +21,16 @@ h1 {
 
 
 .subtitle {
-  text-align: center;
-  margin: 20px 0;
-  display: block;
-  width: 100%;
+  text-align: left;
+  margin-left: 1em;
 }
+
+.github-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+}
+
 
 
 .subtitle h2 {

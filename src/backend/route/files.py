@@ -1,7 +1,6 @@
 import os
 import shutil
 import boto3
-
 from fastapi import APIRouter, File, UploadFile, HTTPException
 from fastapi.responses import FileResponse
 
@@ -39,6 +38,15 @@ async def download_file(filename: str):
         return FileResponse(file_path)
     else:
         return {"error": "File not found"}
+
+@router.delete("/delete_local_file/{filename}")
+async def delete_local_file(filename: str):
+    file_path = os.path.join(upload_folder, filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return {"message": "The file has been successfully deleted from the local storage"}
+    else:
+        raise HTTPException(status_code=404, detail="File not found")
 
 @router.post("/uploads3/")
 async def upload_to_s3(file: UploadFile = File(...)):

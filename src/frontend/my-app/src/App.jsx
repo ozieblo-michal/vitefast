@@ -16,6 +16,8 @@ function App() {
   const [registerMode, setRegisterMode] = useState(false);
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
+
+  const [selectedFile, setSelectedFile] = useState(null);
   const [localFiles, setLocalFiles] = useState([]);
   const [s3Files, setS3Files] = useState([]);
 
@@ -39,7 +41,7 @@ function App() {
     } catch (err) {
       if (err.response && err.response.status === 404) {
         setDummies([]);
-        console.log('No dummies found.');
+        console.log('No records in the database.');
       } else {
         console.error('Error fetching dummies:', err);
       }
@@ -171,82 +173,72 @@ function App() {
     localStorage.removeItem('token');
   };
 
-  const handleUpload = async (e) => {
-    e.preventDefault();
-    const file = e.target.files[0];
+  const handleFileUpload = async () => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', selectedFile);
 
     try {
-      await axios.post(`${backendUrl}/upload`, formData, {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
+      const res = await axios.post(`${backendUrl}/upload`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
       });
+      console.log('File uploaded:', res.data);
       fetchLocalFiles();
     } catch (err) {
       console.error('Error uploading file:', err);
     }
   };
 
-  const handleUploadToS3 = async (e) => {
-    e.preventDefault();
-    const file = e.target.files[0];
+  const handleFileUploadToS3 = async () => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', selectedFile);
 
     try {
-      await axios.post(`${backendUrl}/uploads3/`, formData, {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
+      const res = await axios.post(`${backendUrl}/uploads3/`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
       });
+      console.log('File uploaded to S3:', res.data);
       fetchS3Files();
     } catch (err) {
       console.error('Error uploading file to S3:', err);
     }
   };
 
-  const handleDownload = async (filename) => {
+  const handleFileDeleteFromS3 = async (filename) => {
     try {
-      const res = await axios.get(`${backendUrl}/download/${filename}`, {
-        responseType: 'blob',
+      const res = await axios.delete(`${backendUrl}/delete_from_s3/${filename}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      console.log('File deleted from S3:', res.data);
+      fetchS3Files();
     } catch (err) {
-      console.error('Error downloading file:', err);
+      console.error('Error deleting file from S3:', err);
     }
   };
 
-  const handleDownloadFromS3 = async (filename) => {
+  const handleFileDelete = async (filename) => {
     try {
-      const res = await axios.get(`${backendUrl}/download_s3/${filename}`, {
-        responseType: 'blob',
+      const res = await axios.delete(`${backendUrl}/delete_local_file/${filename}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      console.log('File deleted from local storage:', res.data);
+      fetchLocalFiles();
     } catch (err) {
-      console.error('Error downloading file from S3:', err);
+      console.error('Error deleting file from local storage:', err);
     }
   };
 
   return (
     <div>
       <h1>Simple Vite and FastAPI App</h1>
-      {!token && (
-        <h3 className="subtitle">
-          Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}:81`} target="_blank" rel="noopener noreferrer">{`${backendUrl}:81/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
-        </h3>
-      )}
+      <h3 className="subtitle">
+        Enforce HTTPS is required for this site because it uses the default domain (ozieblo-michal.github.io). This may be disabled if you switch to a custom domain. Open the link <a href={`${backendUrl}:81`} target="_blank" rel="noopener noreferrer">{`${backendUrl}/docs`}</a> and accept the self-signed certificate to ensure the frontend functions correctly.
+      </h3>
       <div className="subtitle">
         <h2>Source: <a href="https://github.com/ozieblo-michal/vitefast">ViteFast</a></h2>
         <a href="https://github.com/ozieblo-michal/vitefast">
@@ -311,6 +303,7 @@ function App() {
       ) : (
         <>
           <button className="secondary" onClick={handleLogout}>Logout</button>
+          <h2>Database</h2>
           <form onSubmit={handleSubmit}>
             <input
               type="text"
@@ -342,12 +335,42 @@ function App() {
           {response && (
             <div>
               <h2>Response:</h2>
+              {/* <p>ID: {response.id}</p> */}
               <p>Name: {response.name}</p>
               <p>Description: {response.description}</p>
               {response.optional_field && <p>Optional Field: {response.optional_field}</p>}
             </div>
           )}
-          <h2>All Dummies</h2>
+          <h2>Local Files</h2>
+          <input type="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
+          <button onClick={handleFileUpload}>Upload to Local</button>
+          <button onClick={handleFileUploadToS3}>Upload to S3</button>
+          <ul>
+            {localFiles.length > 0 ? (
+              localFiles.map((file, index) => (
+                <li key={index}>
+                  <a href={`${backendUrl}/download/${file}`} target="_blank" rel="noopener noreferrer">{file}</a>
+                  <button onClick={() => handleFileDelete(file)}>Delete</button>
+                </li>
+              ))
+            ) : (
+              <p>No local files available.</p>
+            )}
+          </ul>
+          <h2>S3 Files</h2>
+          <ul>
+            {s3Files.length > 0 ? (
+              s3Files.map((file, index) => (
+                <li key={index}>
+                  <a href={`${backendUrl}/download_s3/${file}`} target="_blank" rel="noopener noreferrer">{file}</a>
+                  <button onClick={() => handleFileDeleteFromS3(file)}>Delete</button>
+                </li>
+              ))
+            ) : (
+              <p>No S3 files available.</p>
+            )}
+          </ul>
+          <h2>Database</h2>
           <ul>
             {dummies.length > 0 ? (
               dummies.map((dummy) => (
@@ -361,35 +384,7 @@ function App() {
                 </li>
               ))
             ) : (
-              <p>No dummies available.</p>
-            )}
-          </ul>
-          <h2>Local Files</h2>
-          <input type="file" onChange={handleUpload} />
-          <ul>
-            {localFiles.length > 0 ? (
-              localFiles.map((file) => (
-                <li key={file}>
-                  <p>{file}</p>
-                  <button onClick={() => handleDownload(file)}>Download</button>
-                </li>
-              ))
-            ) : (
-              <p>No local files available.</p>
-            )}
-          </ul>
-          <h2>S3 Files</h2>
-          <input type="file" onChange={handleUploadToS3} />
-          <ul>
-            {s3Files.length > 0 ? (
-              s3Files.map((file) => (
-                <li key={file}>
-                  <p>{file}</p>
-                  <button onClick={() => handleDownloadFromS3(file)}>Download</button>
-                </li>
-              ))
-            ) : (
-              <p>No S3 files available.</p>
+              <p>No records in the database.</p>
             )}
           </ul>
         </>
