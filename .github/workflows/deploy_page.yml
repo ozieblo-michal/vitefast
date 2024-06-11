@@ -26,7 +26,7 @@ jobs:
       - name: Build project
         working-directory: src/frontend/my-app
         env:
-          REACT_APP_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
+          VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
         run: npm run build
 
       - name: Upload production-ready build files
