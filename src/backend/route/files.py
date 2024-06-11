@@ -3,7 +3,7 @@ import shutil
 import boto3
 
 from fastapi import APIRouter, File, UploadFile, HTTPException
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse
 
 upload_folder = "uploads"
 
@@ -90,12 +90,32 @@ async def download_from_s3(filename: str):
         s3 = boto3.client("s3")
 
     try:
-        s3_response = s3.get_object(Bucket=bucket_name, Key=file_name_in_s3)
-        return StreamingResponse(s3_response['Body'], media_type='application/octet-stream', headers={
-            "Content-Disposition": f"attachment; filename={filename}"
-        })
-    except s3.exceptions.NoSuchKey:
-        raise HTTPException(status_code=404, detail="File not found in S3")
+        s3.download_file(bucket_name, file_name_in_s3, f"downloads/{filename}")
+        return FileResponse(path=f"downloads/{filename}", filename=filename)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/delete_from_s3/{filename}")
+async def delete_from_s3(filename: str):
+    bucket_name = os.getenv("S3_BUCKET_NAME")
+    file_name_in_s3 = "folder/" + filename
+
+    if os.getenv("USE_LOCALSTACK") == "true":
+        s3 = boto3.client(
+            "s3",
+            endpoint_url="http://localhost:4566",
+            region_name="us-east-1",
+            aws_access_key_id="test",
+            aws_secret_access_key="test",
+        )
+    else:
+        s3 = boto3.client("s3")
+
+    try:
+        s3.delete_object(Bucket=bucket_name, Key=file_name_in_s3)
+        return {"message": "The file has been successfully deleted from S3"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/list_s3_files")
 async def list_s3_files():
@@ -114,7 +134,12 @@ async def list_s3_files():
 
     try:
         response = s3.list_objects_v2(Bucket=bucket_name, Prefix="folder/")
-        files = [obj['Key'].split("folder/")[1] for obj in response.get('Contents', [])]
+        files = [item['Key'].replace('folder/', '') for item in response.get('Contents', [])]
         return {"files": files}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/list_local_files")
+async def list_local_files():
+    files = os.listdir(upload_folder)
+    return {"files": files}
