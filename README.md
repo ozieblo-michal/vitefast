@@ -128,65 +128,64 @@ The choice between AWS RDS and a containerized Postgres hinges on needs for the 
 
 `exit` : Exit the interactive shell in the Docker container.
 
-### Conclusion :bulb:
-
-This package is more than an engine. Whether you are a beginner looking to understand the intricacies of AWS services and application deployment, or an experienced developer seeking a quick and reliable solution for your AWS-based projects, this package was crafted to meet your needs.
-
-I welcome contributions, feedback, and inquiries to continually improve and update this repository. Let's build and learn together!
 
 
+### Frontend
 
+In order to connect the frontend template in React with Vite based on GitHub Pages (example: [vitefast page](https://ozieblo-michal.github.io/vitefast/)), you need to execute the below command in the EC2 instance, replacing YOUR_IP_ADDRESS with the value of the assigned IP. HTTPS is required for this site because it uses the default domain
 
-
-
-
-
-
-
-sudo apt-get update
-sudo apt-get install nginx -y
-sudo mkdir -p /etc/nginx/ssl/
-sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx-selfsigned.key -out /etc/nginx/ssl/nginx-selfsigned.crt -subj "/CN=<<<IP ADDRESS>>>"
-sudo nano /etc/nginx/sites-available/default
-sudo systemctl start nginx
-sudo systemctl reload nginx
-
-
-openssl s_client -connect <<<IP ADDRESS>>>
-
-
-
-
-
-
-server {
+```sh
+IPADDRESS="YOUR_IP_ADDRESS" && sudo apt-get update && sudo apt-get install nginx -y && sudo mkdir -p /etc/nginx/ssl/ && sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx-selfsigned.key -out /etc/nginx/ssl/nginx-selfsigned.crt -subj "/CN=$IPADDRESS" && echo "server {
     listen 81 ssl;
-    server_name <<<IP ADDRESS>>>;
+    server_name $IPADDRESS;
 
     ssl_certificate /etc/nginx/ssl/nginx-selfsigned.crt;
     ssl_certificate_key /etc/nginx/ssl/nginx-selfsigned.key;
 
     location / {
         proxy_pass http://localhost:80;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
 }
 
 server {
     listen 443 ssl;
-    server_name 52.31.107.76;
+    server_name $IPADDRESS;
 
     ssl_certificate /etc/nginx/ssl/nginx-selfsigned.crt;
     ssl_certificate_key /etc/nginx/ssl/nginx-selfsigned.key;
 
     location / {
         proxy_pass http://localhost:80;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
-}
+}" | sudo tee /etc/nginx/sites-available/default && sudo nginx -t && sudo systemctl start nginx && sudo systemctl reload nginx
+
+```
+
+What is going on here?
+
+1. `sudo apt-get update` : Updates system packages
+2. `sudo apt-get install nginx -y` : Installs the Nginx web server
+3. `sudo mkdir -p /etc/nginx/ssl/` : Creates a directory for SSL certificates
+4. `sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx-selfsigned.key -out /etc/nginx/ssl/nginx-selfsigned.crt -subj "/CN=$IPADDRESS"` : Generates a self-signed SSL certificate
+5. Writes a new Nginx configuration to the default site configuration file
+6. `sudo nginx -t` : Tests the Nginx configuration
+7. `sudo systemctl start nginx` : Starts the Nginx service
+8. `sudo systemctl reload nginx` : Reloads the Nginx configuration
+
+You can check the result using: `openssl s_client -connect $IPADDRESS:81`
+
+Then rerun related GitHub Actions.
+
+### Conclusion :bulb:
+
+This package is more than an engine. Whether you are a beginner looking to understand the intricacies of AWS services and application deployment, or an experienced developer seeking a quick and reliable solution for your AWS-based projects, this package was crafted to meet your needs.
+
+I welcome contributions, feedback, and inquiries to continually improve and update this repository. Let's build and learn together!

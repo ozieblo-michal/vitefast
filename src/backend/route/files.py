@@ -8,6 +8,7 @@ upload_folder = "uploads"
 
 router = APIRouter()
 
+
 @router.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     allowed_extensions = {"txt", "csv", "jpg", "png", "pdf"}
@@ -31,6 +32,7 @@ async def upload_file(file: UploadFile = File(...)):
 
     return {"filename": file.filename, "location": file_path}
 
+
 @router.get("/download/{filename}")
 async def download_file(filename: str):
     file_path = os.path.join(upload_folder, filename)
@@ -39,14 +41,18 @@ async def download_file(filename: str):
     else:
         return {"error": "File not found"}
 
+
 @router.delete("/delete_local_file/{filename}")
 async def delete_local_file(filename: str):
     file_path = os.path.join(upload_folder, filename)
     if os.path.exists(file_path):
         os.remove(file_path)
-        return {"message": "The file has been successfully deleted from the local storage"}
+        return {
+            "message": "The file has been successfully deleted from the local storage"
+        }
     else:
         raise HTTPException(status_code=404, detail="File not found")
+
 
 @router.post("/uploads3/")
 async def upload_to_s3(file: UploadFile = File(...)):
@@ -104,6 +110,7 @@ async def delete_from_s3(filename: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/list_s3_files")
 async def list_s3_files():
     bucket_name = os.getenv("S3_BUCKET_NAME")
@@ -121,10 +128,13 @@ async def list_s3_files():
 
     try:
         response = s3.list_objects_v2(Bucket=bucket_name, Prefix="folder/")
-        files = [item['Key'].replace('folder/', '') for item in response.get('Contents', [])]
+        files = [
+            item["Key"].replace("folder/", "") for item in response.get("Contents", [])
+        ]
         return {"files": files}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/list_local_files")
 async def list_local_files():

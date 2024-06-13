@@ -1,14 +1,10 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-
+from sqlalchemy.exc import NoResultFound
 import model.models as models
 import schema.schemas as schemas
-
-
-from sqlalchemy.exc import NoResultFound
-
-
 import logging
+
 
 logger = logging.getLogger("configure_logger")
 
@@ -17,7 +13,6 @@ def generate_error():
     logger = logging.getLogger("configure_logger")
     logger.error("This is a test error message")
     raise HTTPException(status_code=500, detail="This is a test error")
-
 
 
 def get_all(db: Session):

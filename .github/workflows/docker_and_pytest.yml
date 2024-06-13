@@ -17,6 +17,6 @@ jobs:
     - name: Build Docker image
       run: docker build -t vitefast:latest .
     - name: Run Pytest in /src directory
-      run: docker run --rm vitefast:latest /bin/sh -c "cd src && poetry run python -m pytest ."
+      run: docker run --rm vitefast:latest /bin/sh -c "cd src/backend && poetry run python -m pytest ."
 
 

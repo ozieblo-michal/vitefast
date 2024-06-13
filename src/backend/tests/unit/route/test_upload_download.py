@@ -1,19 +1,12 @@
 import os
-
-from fastapi.testclient import TestClient
-
 import main
-
 import httpx
 import pytest
-
-
 import boto3
 
-from moto import mock_s3
+from fastapi.testclient import TestClient
+from moto import mock_s3, mock_ec2
 
-
-from moto import mock_ec2
 
 client = TestClient(main.app)
 
@@ -132,3 +125,83 @@ def test_upload_to_s3_moto(test_app, s3_mock):
     objects_in_bucket = s3_mock.list_objects(Bucket="test-bucket")
     filenames = [obj["Key"] for obj in objects_in_bucket.get("Contents", [])]
     assert "folder/testfile.txt" in filenames
+
+
+def test_delete_local_file():
+    test_file_name = "test_file_to_delete.txt"
+    test_file_content = b"test content"
+
+    upload_folder = "uploads"
+
+    os.makedirs(upload_folder, exist_ok=True)
+    test_file_path = os.path.join(upload_folder, test_file_name)
+
+    with open(test_file_path, "wb") as file:
+        file.write(test_file_content)
+
+    try:
+        response = client.delete(f"/delete_local_file/{test_file_name}")
+        assert response.status_code == 200
+        assert (
+            response.json().get("message")
+            == "The file has been successfully deleted from the local storage"
+        )
+        assert not os.path.exists(test_file_path)
+    finally:
+        if os.path.exists(test_file_path):
+            os.remove(test_file_path)
+
+
+def test_delete_nonexistent_local_file():
+    response = client.delete("/delete_local_file/nonexistent_file.txt")
+    assert response.status_code == 404
+
+
+def test_list_local_files():
+    create_test_file()
+    try:
+        response = client.get("/list_local_files")
+        assert response.status_code == 200
+        assert test_file_name in response.json().get("files")
+    finally:
+        remove_test_file()
+
+
+def test_delete_from_s3(test_app, s3_mock):
+    test_file_name = "testfile_to_delete.txt"
+    s3_mock.put_object(
+        Bucket="test-bucket", Key=f"folder/{test_file_name}", Body=b"test content"
+    )
+
+    response = test_app.delete(f"/delete_from_s3/{test_file_name}")
+    assert response.status_code == 200
+    assert response.json() == {
+        "message": "The file has been successfully deleted from S3"
+    }
+
+    objects_in_bucket = s3_mock.list_objects(Bucket="test-bucket")
+    filenames = [obj["Key"] for obj in objects_in_bucket.get("Contents", [])]
+    assert f"folder/{test_file_name}" not in filenames
+
+
+def test_delete_nonexistent_from_s3(test_app, s3_mock):
+    response = test_app.delete("/delete_from_s3/nonexistent_file.txt")
+    assert response.status_code == 200
+    assert response.json() == {
+        "message": "The file has been successfully deleted from S3"
+    } or response.json() == {"detail": "An error occurred"}
+
+
+def test_list_s3_files_empty(test_app, s3_mock):
+    response = test_app.get("/list_s3_files")
+    assert response.status_code == 200
+    assert response.json().get("files") == []
+
+
+def test_list_s3_files(test_app, s3_mock):
+    s3_mock.put_object(
+        Bucket="test-bucket", Key="folder/testfile.txt", Body=b"test content"
+    )
+    response = test_app.get("/list_s3_files")
+    assert response.status_code == 200
+    assert "testfile.txt" in response.json().get("files")

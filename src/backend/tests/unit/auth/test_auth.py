@@ -1,23 +1,13 @@
 from fastapi.testclient import TestClient
 from jose import jwt
-
-
 import auth.auth as auth
 import main
-
 from db.dependencies import get_db
-
-
 from auth.utils import get_password_hash
-
 from model.models import User, Base
-
 import pytest
-
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
 from sqlalchemy.pool import StaticPool
 
 client = TestClient(main.app)
@@ -85,7 +75,9 @@ def test_get_current_user(test_db):
 
     token = auth.create_access_token(user_data)
 
-    current_user = client.get("auth/users/me", headers={"Authorization": f"Bearer {token}"})
+    current_user = client.get(
+        "auth/users/me", headers={"Authorization": f"Bearer {token}"}
+    )
     assert current_user.status_code == 200
     assert current_user.json()["username"] == "testuser"
 

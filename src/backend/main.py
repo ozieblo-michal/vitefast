@@ -41,4 +41,6 @@ if __name__ == "__main__":
     if os.environ.get("RUNNING_IN_CONTAINER"):
         uvicorn.run("main:app", host="0.0.0.0", port=80, log_config=None)
     else:
-        uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True, log_config=None)
+        uvicorn.run(
+            "main:app", host="127.0.0.1", port=8000, reload=True, log_config=None
+        )
