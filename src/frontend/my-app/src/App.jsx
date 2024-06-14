@@ -96,6 +96,7 @@ function App() {
         });
       }
       console.log('Response from server:', res.data);
+      setResponse(res.data);
       fetchDummies();
       setName('');
       setDescription('');
@@ -334,6 +335,16 @@ function App() {
             />
             <button className="primary" type="submit">{updateMode ? 'Update' : 'Submit'}</button>
           </form>
+          {response 
+          && (
+            <div>
+              <h2>Response:</h2>
+              <p>Name: {response.name}</p>
+              <p>Description: {response.description}</p>
+              {response.optional_field && <p>Optional Field: {response.optional_field}</p>}
+            </div>
+          )
+          }
           <div className="upload-buttons">
             <input type="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
             <button className="upload-to-local" onClick={handleFileUpload}>Upload to Local</button>
